@@ -12,7 +12,7 @@ const AdminProductStock = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await axiosInstance.get("/api/products/all");
+      const res = await axiosInstance.get("/products/all");
       setProducts(res.data);
     } catch (err) {
       console.error("Error fetching products:", err);
@@ -24,20 +24,30 @@ const AdminProductStock = () => {
   };
 
   const handleUpdateStock = async (id) => {
-    const updatedStock = parseInt(stockInputs[id]);
+  const updatedStock = parseInt(stockInputs[id]);
+  if (isNaN(updatedStock) || updatedStock < 0) {
+    alert("Please enter a valid non-negative number");
+    return;
+  }
 
-    if (isNaN(updatedStock) || updatedStock < 0) {
-      alert("Please enter a valid non-negative number");
-      return;
-    }
+  const token = localStorage.getItem('adminToken'); 
 
-    try {
-      await axiosInstance.put(`/api/products/update-by-productid/${id}`, { stock: updatedStock });
-      fetchProducts(); // Refresh updated data
-    } catch (err) {
-      console.error("Error updating stock:", err);
-    }
-  };
+  try {
+    await axiosInstance.put(
+      `/admin/update-stock/${id}`,
+      { stock: updatedStock },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+    fetchProducts();
+  } catch (err) {
+    console.error("Error updating stock:", err);
+  }
+};
+
 
   const filteredProducts = products.filter((prod) =>
     prod.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

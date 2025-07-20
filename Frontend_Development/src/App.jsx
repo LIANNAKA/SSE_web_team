@@ -51,7 +51,7 @@ function App() {
           <Route path="/orders" element={<MyOrder/>}/>
           <Route path="/wishlist" element={<Wishlist/>}/>
           <Route path="/offers" element={<MyOffer/>}/>
-          <Route path="/offers" element={<UserSideBar/>}/>
+          <Route path="/sidebar" element={<UserSideBar/>}/>
           <Route path="/address" element={<MyAddress/>}/>
           <Route
             path="/admin"

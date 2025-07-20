@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 
 const AdminBannerUploader = () => {
   const [title, setTitle] = useState("");
@@ -7,13 +7,14 @@ const AdminBannerUploader = () => {
   const [banners, setBanners] = useState([]);
 
   const fetchBanners = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/api/banner");
-      setBanners(res.data);
-    } catch (err) {
-      console.error("Error fetching banners:", err);
-    }
-  };
+  try {
+    const res = await axiosInstance.get("/banner"); 
+    setBanners(res.data);
+  } catch (err) {
+    console.error("Error fetching banners:", err);
+  }
+};
+
 
   useEffect(() => {
     fetchBanners();
@@ -31,9 +32,14 @@ const AdminBannerUploader = () => {
     formData.append("image", image);
 
     try {
-      await axios.post("http://localhost:5000/api/banner", formData);
+      await axiosInstance.post("/banner", formData, {
+       headers: {
+        "Content-Type": "multipart/form-data",
+        },
+      });
       setTitle("");
       setImage(null);
+      document.querySelector('input[type="file"]').value = "";
       fetchBanners();
       alert("Banner uploaded successfully");
     } catch (err) {
