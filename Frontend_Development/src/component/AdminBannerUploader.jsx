@@ -27,20 +27,22 @@ const AdminBannerUploader = () => {
     }
 
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("image", image);
+    formData.append("images", image);
+     formData.append("titles", JSON.stringify([title]));
 
     try {
-      await axios.post("http://localhost:5000/api/banner", formData);
-      setTitle("");
-      setImage(null);
-      fetchBanners();
-      alert("Banner uploaded successfully");
-    } catch (err) {
-      console.error("Error uploading banner:", err);
-      alert("Failed to upload banner");
-    }
-  };
+    await axios.post("http://localhost:5000/api/banner/multi", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    setTitle("");
+    setImage(null);
+    fetchBanners();
+    alert("Banner uploaded successfully");
+  } catch (err) {
+    console.error("Error uploading banner:", err);
+    alert("Failed to upload banner");
+  }
+};
 
   return (
     <div className="container mt-4">

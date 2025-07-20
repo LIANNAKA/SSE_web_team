@@ -9,7 +9,7 @@ import CreateUser from "../component/CreateUser";
 import DeleteUser from "../component/DeleteUser";
 import ProductList from "../component/ProductList";
 import ForgotResetAdminPass from "../component/ForgotResetAdminPass";
-import AdminBannerUpload from "../component/AdminBannerUpload";
+import AdminBannerUploader from "../component/AdminBannerUploader";
 import AdminOrderStatusPage from "../component/AdminOrderStatusPage";
 import AdmindeleteProducts from "../component/AdmindeleteProduct";
 import AdminProductStock from "../component/AdminProductStock";
@@ -37,7 +37,7 @@ const AdminDashboard = () => {
       case "productstock":
         return <AdminProductStock />;
       case "bannerupload":
-        return <AdminBannerUpload />;
+        return <AdminBannerUploader />;
       case "orderstatus":
         return <AdminOrderStatusPage/>;
       default:

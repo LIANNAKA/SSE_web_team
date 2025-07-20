@@ -93,3 +93,7 @@ router.delete('/:id', async (req, res) => {
 
 
 export default router;
+
+router.get('/test', (req, res) => {
+  res.send('Banner Route Working');
+});
