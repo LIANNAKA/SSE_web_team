@@ -32,7 +32,7 @@ const AdminBannerUploader = () => {
      formData.append("titles", JSON.stringify([title]));
 
     try {
-    await axios.post("http://localhost:5000/api/banner/multi", formData, {
+    await axiosInstance.post("http://localhost:5000/api/banner/multi", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     setTitle("");
