@@ -51,19 +51,25 @@ const filteredProducts = products.filter((prod) =>
           <thead className="table-dark">
             <tr>
               <th>#</th>
+              <th>Product ID</th>
               <th>Product Name</th>
+              <th>Category</th>
               <th>Price (₹)</th>
               <th>Stock Left</th>
+              <th>Units Sold</th>
             </tr>
           </thead>
           <tbody>
             {filteredProducts.map((prod, idx) => (
-  <tr key={prod.productId}>
-    <td>{idx + 1}</td>
-    <td>{prod.name}</td>
-    <td>{prod.price}</td>
-    <td>{prod.stock}</td>
-  </tr>
+            <tr key={prod.productId}>
+              <td>{idx + 1}</td>
+              <td>{prod.productId}</td>
+              <td>{prod.name}</td>
+              <td>{prod.category}</td>
+              <td>{prod.price}</td>
+              <td>{prod.stock}</td>
+              <td>{prod.unitsSold}</td>
+            </tr>
 ))}
 
           </tbody>
