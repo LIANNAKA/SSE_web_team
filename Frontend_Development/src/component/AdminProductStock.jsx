@@ -12,7 +12,7 @@ const AdminProductStock = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await axiosInstance.get("/api/products");
+      const res = await axiosInstance.get("/api/products/all");
       setProducts(res.data);
     } catch (err) {
       console.error("Error fetching products:", err);
@@ -32,7 +32,7 @@ const AdminProductStock = () => {
     }
 
     try {
-      await axiosInstance.put(`/api/products/${id}`, { stock: updatedStock });
+      await axiosInstance.put(`/api/products/update-by-productid/${id}`, { stock: updatedStock });
       fetchProducts(); // Refresh updated data
     } catch (err) {
       console.error("Error updating stock:", err);
@@ -71,26 +71,27 @@ const AdminProductStock = () => {
             </thead>
             <tbody>
               {filteredProducts.map((prod) => (
-                <tr key={prod._id}>
-                  <td>{prod.name}</td>
-                  <td>{prod.category || "N/A"}</td>
-                  <td>{prod.stock}</td>
-                  <td>
-                    <input
-                      type="number"
-                      className="form-control mb-1"
-                      value={stockInputs[prod._id] || ""}
-                      onChange={(e) => handleStockChange(prod._id, e.target.value)}
-                      placeholder="New quantity"
-                    />
-                    <button
-                      className="btn btn-sm btn-primary"
-                      onClick={() => handleUpdateStock(prod._id)}
-                    >
-                      Update
-                    </button>
-                  </td>
-                </tr>
+                <tr key={prod.productId}>
+                <td>{prod.name}</td>
+                <td>{prod.category || "N/A"}</td>
+                <td>{prod.stock}</td>
+                <td>
+                  <input
+                    type="number"
+                    className="form-control mb-1"
+                    value={stockInputs[prod.productId] || ""}
+                    onChange={(e) => handleStockChange(prod.productId, e.target.value)}
+                    placeholder="New quantity"
+                  />
+                  <button
+                    className="btn btn-sm btn-primary"
+                    onClick={() => handleUpdateStock(prod.productId)}
+                  >
+                    Update
+                  </button>
+                </td>
+              </tr>
+
               ))}
             </tbody>
           </table>
