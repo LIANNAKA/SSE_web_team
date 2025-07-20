@@ -20,7 +20,11 @@ app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/product-image', productImageRoutes);
 app.use('/uploads', express.static('uploads'));
+<<<<<<< HEAD
 app.use('/api/banner', homePageRoutes);  
+=======
+app.use('/api/banner', homePageRoutes); 
+>>>>>>> lia_branch
 app.use('/uploads', express.static('uploads'));
 
  

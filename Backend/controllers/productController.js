@@ -45,10 +45,13 @@ export const createProduct = async (req, res) => {
 // Read all the list of product
 export const getProducts = async (req, res) => {
   try {
+    console.log('Inside getProducts Controller');
     const products = await Product.find();
+    console.log('Products fetched:', products.length);
     res.json(products);
   } catch (err) {
-    res.status(500).json({ error: 'Error fetching products' });
+    console.error('Error fetching products:', err);
+    res.status(500).json({ error: 'Error fetching products', details: err.message });
   }
 };
 
@@ -166,6 +169,7 @@ export const getProductsByCategory = async (req, res) => {
     res.status(500).json({ error: 'Error fetching category', details: err.message });
   }
 };
+
 
 
 
