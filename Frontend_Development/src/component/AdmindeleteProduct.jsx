@@ -11,7 +11,7 @@ const AdmindeleteProducts = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await axiosInstance.get("/api/products");
+      const res = await axiosInstance.get("/products/all");
       setProducts(res.data);
     } catch (err) {
       console.error("Error fetching products:", err);
