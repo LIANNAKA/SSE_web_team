@@ -34,7 +34,7 @@ function LoginModal({ setShowLoginModal }) {
   console.log('Sign Up Payload:', { name: signupName, mobile: signupMobile, email: signupEmail, password: signupPassword });
 
   try {
-    const { data } = await axiosInstance.post("/register", {
+    const { data } = await axiosInstance.post("/api/users/register", {
       name: signupName,
       mobile: signupMobile,
       email: signupEmail,
@@ -64,7 +64,7 @@ const handleLogin = async () => {
   }
 
   try {
-    const { data } = await axiosInstance.post("/login", {
+    const { data } = await axiosInstance.post("/api/users/login", {
       email: loginEmail,
       password: loginPassword,
     });
