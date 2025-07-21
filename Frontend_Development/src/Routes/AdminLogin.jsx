@@ -10,20 +10,6 @@ function AdminLogin() {
   const [loginSuccess, setLoginSuccess] = useState(false);
   const navigate = useNavigate();
 
-  // const handleLogin = () => {
-  //   const adminEmail = "admin@example.com";
-  //   const adminPassword = "admin123";
-
-  //   if (email === adminEmail && password === adminPassword) {
-  //     localStorage.setItem("userRole", "admin");
-  //     setLoginSuccess(true);
-  //     setError("");
-  //   } else {
-  //     setLoginSuccess(false);
-  //     setError("❌ Wrong Credentials");
-  //   }
-  // };
-
 const handleLogin = async () => {
   if (!email || !password) {
     setError("Please enter email and password");
