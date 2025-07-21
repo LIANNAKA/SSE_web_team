@@ -19,7 +19,6 @@ const MyProfile = () => {
 
     axios
       .get(`http://localhost:5000/api/users/profile/${loggedInUser.user_id}`, {
-      .get(`http://localhost:5000/api/users/profile/${loggedInUser.user_id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -75,4 +74,3 @@ const MyProfile = () => {
 };
 
 export default MyProfile;
-
