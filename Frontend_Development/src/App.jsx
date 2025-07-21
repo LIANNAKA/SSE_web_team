@@ -23,14 +23,13 @@ import MyProfile from "./component/UserProfileDashboard/MyProfile";
 import UserSideBar from "./component/UserProfileDashboard/UserSideBar";
 import Wishlist from "./component/UserProfileDashboard/Wishlist";
 import SearchProduct from "./Routes/SearchProduct";
-
-
-
+import ProtectedRoute from "./utils/protectedRoute";
 
 
 function App() {
-  const userRole = localStorage.getItem("userRole") || "guest";
-  const [showLoginModal, setShowLoginModal] = useState(false);
+    
+    const [showLoginModal, setShowLoginModal] = useState(false);
+
 
     return(
 
@@ -43,7 +42,7 @@ function App() {
           <Route path="/about" element={<Products />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/adminlogin" element={<AdminLogin />} />
           <Route path="/adminorderstatus" element={<UserOrderPlace />} />
           <Route path="/admin/banner-upload" element={<AdminBannerUploader />} />
           <Route path="/admin/stock" element={<AdminProductStock />} />
@@ -56,15 +55,15 @@ function App() {
           <Route path="/address" element={<MyAddress/>}/>
           <Route path="/search" element={<SearchProduct/>}/>
           <Route
-            path="/admin"
-            element={
-              userRole === "admin" ? (
-                <AdminDashboard />
-              ) : (
-                <Navigate to="/admin-login" />
-              )
-            }
-          />
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+          
         </Routes>
       </main>
       <Footer />
