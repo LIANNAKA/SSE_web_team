@@ -187,3 +187,32 @@ export const getUsers = async (req, res) => {
     res.status(500).json({ error: 'Error fetching users' });
   }
 };
+
+// Get logged-in user's address
+export const getOwnProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('address');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json({ address: user.address || '' });
+  } catch (err) {
+    res.status(500).json({ error: 'Error fetching address' });
+  }
+};
+
+// Update logged-in user's address
+export const updateAddress = async (req, res) => {
+  try {
+    const { address } = req.body;
+    if (!address) return res.status(400).json({ error: 'Address is required' });
+
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    user.address = address;
+    await user.save();
+
+    res.json({ message: 'Address updated successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Error updating address' });
+  }
+};
