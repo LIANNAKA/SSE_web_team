@@ -17,6 +17,7 @@ const MyProfile = () => {
       return;
     }
 
+    
     axios
       .get(`http://localhost:5000/api/users/profile/${loggedInUser.user_id}`, {
         headers: { Authorization: `Bearer ${token}` },
