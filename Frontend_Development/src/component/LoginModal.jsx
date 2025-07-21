@@ -80,16 +80,14 @@ function LoginModal({ setShowLoginModal }) {
 
       window.dispatchEvent(new Event("storage")); // For Navbar refresh if required
 
-<<<<<<< HEAD
     localStorage.setItem("token", data.token);
     localStorage.setItem("user", JSON.stringify(data.user));
     localStorage.setItem("userName", data.userName || loginEmail);
     window.dispatchEvent(new Event("storage"));  // Update Navbar
-=======
+
       setMessage(
         data.message || `Welcome back, ${data.user.name || loginEmail}!`
       );
->>>>>>> lia_branch
 
       setTimeout(() => {
         setShowLoginModal(false);
