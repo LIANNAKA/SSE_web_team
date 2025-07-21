@@ -19,6 +19,7 @@ const AdminProductStock = () => {
     }
   };
 
+  
   const handleStockChange = (id, value) => {
     setStockInputs({ ...stockInputs, [id]: value });
   };
