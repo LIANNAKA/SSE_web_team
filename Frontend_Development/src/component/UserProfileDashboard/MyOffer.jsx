@@ -10,7 +10,7 @@ const MyOffers = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/user/offers")
+      .get("http://localhost:5000/api/users/offers")
       .then((res) => {
         setOffers(res.data);
         setLoading(false);

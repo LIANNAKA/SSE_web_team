@@ -70,6 +70,7 @@ const handleLogin = async () => {
     });
 
     localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
     localStorage.setItem("userName", data.userName || loginEmail);
     window.dispatchEvent(new Event("storage"));  // Update Navbar
 

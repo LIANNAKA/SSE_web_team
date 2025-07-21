@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 
 // get user by id
 export const getUserById = async (req, res) => {
@@ -112,7 +113,14 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
     
-    // 3. Success response
+    // 3. Generate JWT token
+    const token = jwt.sign(
+      { id: user._id }, // payload
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }  // valid for 7 days
+    );
+
+    // 4. Success response
     res.status(200).json({
       message: 'Login successful',
       user: {
@@ -120,7 +128,8 @@ export const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         mobile: user.mobile
-      }
+      },
+      token: token
     });
   } catch (err) {
     res.status(500).json({ error: 'Login failed', details: err.message });

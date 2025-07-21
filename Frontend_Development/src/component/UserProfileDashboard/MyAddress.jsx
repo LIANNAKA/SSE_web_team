@@ -14,7 +14,7 @@ const MyAddress = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/user/profile", {
+      .get("http://localhost:5000/api/users/profile", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {

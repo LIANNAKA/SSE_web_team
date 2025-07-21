@@ -11,7 +11,7 @@ const Wishlist = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/user/wishlist", {
+      .get("http://localhost:5000/api/users/wishlist", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
