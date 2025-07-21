@@ -162,3 +162,28 @@ export const getProductStats = async (req, res) => {
     res.status(500).json({ error: 'Error fetching product stats', details: err.message });
   }
 };
+
+export const adminUpdateStock = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const { stock } = req.body;
+
+    if (!stock || stock < 0) {
+      return res.status(400).json({ error: 'Invalid stock value' });
+    }
+
+    const product = await Product.findOne({ productId });
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    product.stock += stock; 
+    await product.save();
+
+    res.json({ message: 'Stock updated successfully', updatedStock: product.stock });
+  } catch (err) {
+    res.status(500).json({ error: 'Error updating stock', details: err.message });
+  }
+};
+
+

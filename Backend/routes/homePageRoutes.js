@@ -4,6 +4,23 @@ import upload from '../middleware/upload.js';
 
 const router = express.Router();
 
+router.post('/', upload.single('image'), async (req, res) => {
+  try {
+    const { title } = req.body;
+    if (!req.file || !title) {
+      return res.status(400).json({ error: 'Title and image required' });
+    }
+
+    const image = `/uploads/${req.file.filename}`;
+    const banner = new Banner({ title, image });
+    await banner.save();
+
+    res.status(201).json({ message: 'Banner uploaded successfully', banner });
+  } catch (err) {
+    console.error('Single Upload Error:', err);
+    res.status(500).json({ error: 'Failed to upload banner' });
+  }
+});
 
 // ---------------- Multiple Banners Upload ----------------
 router.post('/multi', upload.array('images', 100), async (req, res) => {
@@ -93,3 +110,7 @@ router.delete('/:id', async (req, res) => {
 
 
 export default router;
+
+router.get('/test', (req, res) => {
+  res.send('Banner Route Working');
+});

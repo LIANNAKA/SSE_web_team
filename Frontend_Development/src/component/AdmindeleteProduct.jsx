@@ -11,7 +11,7 @@ const AdmindeleteProducts = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await axiosInstance.get("/api/products");
+      const res = await axiosInstance.get("/products/all");
       setProducts(res.data);
     } catch (err) {
       console.error("Error fetching products:", err);
@@ -19,10 +19,10 @@ const AdmindeleteProducts = () => {
   };
 
   // Delete product handler
-  const handleDelete = async (id) => {
+  const handleDelete = async (productId) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
-        await axiosInstance.delete(`/api/products/${id}`);
+        await axiosInstance.delete(`/api/products/${productId}`);
         fetchProducts(); // Refresh list
       } catch (err) {
         console.error("Error deleting product:", err);
@@ -42,7 +42,6 @@ const AdmindeleteProducts = () => {
             <thead className="table-dark">
               <tr>
                 <th>Name</th>
-                <th>Image</th>
                 <th>Price</th>
                 <th>Stock</th>
                 <th>Actions</th>
@@ -50,17 +49,14 @@ const AdmindeleteProducts = () => {
             </thead>
             <tbody>
               {products.map((prod) => (
-                <tr key={prod._id}>
+                <tr key={prod.productId}>
                   <td>{prod.name}</td>
-                  <td>
-                    <img src={prod.image} alt="product" style={{ width: "80px" }} />
-                  </td>
                   <td>₹{prod.price}</td>
                   <td>{prod.stock}</td>
                   <td>
                     <button
+                      onClick={() => handleDelete(prod.productId)}
                       className="btn btn-danger"
-                      onClick={() => handleDelete(prod._id)}
                     >
                       Delete
                     </button>

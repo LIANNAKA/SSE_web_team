@@ -20,11 +20,10 @@ app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/product-image', productImageRoutes);
 app.use('/uploads', express.static('uploads'));
-app.use('/api/banner', homePageRoutes);  // Assuming you imported routes
+app.use('/api/banner', homePageRoutes);  
 app.use('/uploads', express.static('uploads'));
 
-
-  
+ 
 
 
 const PORT = process.env.PORT || 5000;

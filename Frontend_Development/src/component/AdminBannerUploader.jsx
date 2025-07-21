@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 
 const AdminBannerUploader = () => {
   const [title, setTitle] = useState("");
@@ -7,13 +7,14 @@ const AdminBannerUploader = () => {
   const [banners, setBanners] = useState([]);
 
   const fetchBanners = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/api/banner");
-      setBanners(res.data);
-    } catch (err) {
-      console.error("Error fetching banners:", err);
-    }
-  };
+  try {
+    const res = await axiosInstance.get("/banner"); 
+    setBanners(res.data);
+  } catch (err) {
+    console.error("Error fetching banners:", err);
+  }
+};
+
 
   useEffect(() => {
     fetchBanners();
@@ -27,20 +28,22 @@ const AdminBannerUploader = () => {
     }
 
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("image", image);
+    formData.append("images", image);
+     formData.append("titles", JSON.stringify([title]));
 
     try {
-      await axios.post("http://localhost:5000/api/banner", formData);
-      setTitle("");
-      setImage(null);
-      fetchBanners();
-      alert("Banner uploaded successfully");
-    } catch (err) {
-      console.error("Error uploading banner:", err);
-      alert("Failed to upload banner");
-    }
-  };
+    await axiosInstance.post("http://localhost:5000/api/banner/multi", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    setTitle("");
+    setImage(null);
+    fetchBanners();
+    alert("Banner uploaded successfully");
+  } catch (err) {
+    console.error("Error uploading banner:", err);
+    alert("Failed to upload banner");
+  }
+};
 
   return (
     <div className="container mt-4">
