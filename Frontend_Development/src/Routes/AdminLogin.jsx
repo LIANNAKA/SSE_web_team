@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from 'axios';
+import { useAuth } from "../context/useAuth";
 
 function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -9,6 +10,7 @@ function AdminLogin() {
   const [error, setError] = useState("");
   const [loginSuccess, setLoginSuccess] = useState(false);
   const navigate = useNavigate();
+  const { loginAsAdmin } = useAuth();
 
 const handleLogin = async () => {
   if (!email || !password) {
@@ -24,6 +26,7 @@ const handleLogin = async () => {
     });
 
     if (response.data.success) {
+      loginAsAdmin(); 
       localStorage.setItem("userRole", "admin");
       localStorage.setItem("adminToken", response.data.token);
       localStorage.setItem("adminName", response.data.admin.name);
