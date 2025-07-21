@@ -10,11 +10,16 @@ import {
   forgotPassword,
   resetPassword
 } from '../controllers/userController.js';
+import { protect } from '../middleware/authMiddleware.js';
+import { getOwnProfile, updateAddress } from '../controllers/userController.js';
+
 
 const router = express.Router();
 
 router.get('/', getUsers);
+router.get('/profile', protect, getOwnProfile);
 router.get('/profile/:id', getUserProfile);
+router.put('/update-address', protect, updateAddress);
 router.post('/login', loginUser);
 router.get('/:id', getUserById);
 router.put('/:id', updateUser);

@@ -9,7 +9,11 @@ const Navbar = ({ setShowLoginModal }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
-  const [userName, setUserName] = useState(localStorage.getItem("userName") || "");
+  const [userName, setUserName] = useState(() => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  return user?.name || "";
+});
+
   const [isOpen, setIsOpen] = useState(false);
   const searchRef = useRef();
   const debounceRef = useRef();
@@ -29,11 +33,12 @@ const Navbar = ({ setShowLoginModal }) => {
 
   useEffect(() => {
     const handleStorageChange = () => {
-      const updatedToken = localStorage.getItem("token");
-      const updatedName = localStorage.getItem("userName");
-      setIsLoggedIn(!!updatedToken);
-      setUserName(updatedName || "");
-    };
+  const updatedToken = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
+  setIsLoggedIn(!!updatedToken);
+  setUserName(user?.name || "");
+};
+
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);

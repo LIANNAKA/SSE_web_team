@@ -4,9 +4,7 @@ import axios from "axios";
 
 const MyAddress = () => {
   const [address, setAddress] = useState("");
-  const [company, setCompany] = useState("");
   const [updatedAddress, setUpdatedAddress] = useState("");
-  const [updatedCompany, setUpdatedCompany] = useState("");
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
 
@@ -19,14 +17,11 @@ const MyAddress = () => {
       })
       .then((res) => {
         setAddress(res.data.address || "");
-        setCompany(res.data.company || "");
         setUpdatedAddress(res.data.address || "");
-        setUpdatedCompany(res.data.company || "");
         setLoading(false);
       })
-      .catch((err) => {
-        console.error("Error loading address:", err);
-        setMessage("❌ Failed to fetch profile data");
+      .catch(() => {
+        setMessage("❌ Failed to fetch address");
         setLoading(false);
       });
   }, []);
@@ -34,24 +29,15 @@ const MyAddress = () => {
   const handleUpdate = () => {
     axios
       .put(
-        "http://localhost:5000/api/user/update-address-company",
-        {
-          address: updatedAddress,
-          company: updatedCompany,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        "http://localhost:5000/api/users/update-address",
+        { address: updatedAddress },
+        { headers: { Authorization: `Bearer ${token}` } }
       )
       .then(() => {
         setAddress(updatedAddress);
-        setCompany(updatedCompany);
-        setMessage("✅ Profile updated successfully!");
+        setMessage("✅ Address updated successfully!");
       })
-      .catch((err) => {
-        console.error("Update error:", err);
-        setMessage("❌ Failed to update profile");
-      });
+      .catch(() => setMessage("❌ Failed to update address"));
   };
 
   if (loading) {
@@ -65,32 +51,15 @@ const MyAddress = () => {
   return (
     <Container className="my-5">
       <Card className="shadow p-4">
-        <h3>Address & Company Info</h3>
+        <h3>My Address</h3>
 
-        {/* Display Current Address & Company */}
         <div className="mb-4">
-          <p>
-            <strong>Saved Company:</strong> {company || "Not Provided"}
-          </p>
           <p>
             <strong>Saved Address:</strong> {address || "Not Provided"}
           </p>
         </div>
 
-        {/* Update Form */}
         <Form>
-          <Form.Group controlId="companyName" className="mb-3">
-            <Form.Label>
-              <strong>Update Company Name</strong>
-            </Form.Label>
-            <Form.Control
-              type="text"
-              value={updatedCompany}
-              onChange={(e) => setUpdatedCompany(e.target.value)}
-              placeholder="Enter your company name"
-            />
-          </Form.Group>
-
           <Form.Group controlId="address" className="mb-3">
             <Form.Label>
               <strong>Update Address</strong>
