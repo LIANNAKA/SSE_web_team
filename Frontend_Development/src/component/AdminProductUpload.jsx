@@ -29,7 +29,7 @@ const AdminProductUpdate = ({ isUpdate = false, existingData = {} }) => {
     formData.append("price", price);
     formData.append("stock", stock);
     if (image) {
-      formData.append("imageUrl", image);  // Backend expects imageUrl field
+        formData.append("image", image);
     }
 
     try {
