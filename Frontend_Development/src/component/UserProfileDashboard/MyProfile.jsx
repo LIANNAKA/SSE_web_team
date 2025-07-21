@@ -49,7 +49,7 @@ const MyProfile = () => {
   return (
     <Container className="my-5">
       <Card className="shadow-sm p-4">
-        <Row className="align-items-center">
+        <Row>
           <Col md={4} className="text-center mb-4 mb-md-0">
             <img
               src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
@@ -61,8 +61,12 @@ const MyProfile = () => {
 
           <Col md={8}>
             <h3>{user.name}</h3>
-            <p><strong>Email:</strong> {user.email}</p>
-            <p><strong>Phone:</strong> {user.mobile}</p>
+            <p>
+              <strong>Email:</strong> {user.email}
+            </p>
+            <p>
+              <strong>Phone:</strong> {user.mobile}
+            </p>
           </Col>
         </Row>
       </Card>
