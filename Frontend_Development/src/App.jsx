@@ -22,6 +22,7 @@ import MyOrder from "./component/UserProfileDashboard/MyOrder";
 import MyProfile from "./component/UserProfileDashboard/MyProfile";
 import UserSideBar from "./component/UserProfileDashboard/UserSideBar";
 import Wishlist from "./component/UserProfileDashboard/Wishlist";
+import SearchProduct from "./Routes/SearchProduct";
 
 
 
@@ -42,7 +43,7 @@ function App() {
           <Route path="/about" element={<Products />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/adminlogin" element={<AdminLogin />} />
+          <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/adminorderstatus" element={<UserOrderPlace />} />
           <Route path="/admin/banner-upload" element={<AdminBannerUploader />} />
           <Route path="/admin/stock" element={<AdminProductStock />} />
@@ -53,6 +54,7 @@ function App() {
           <Route path="/offers" element={<MyOffer/>}/>
           <Route path="/sidebar" element={<UserSideBar/>}/>
           <Route path="/address" element={<MyAddress/>}/>
+          <Route path="/search" element={<SearchProduct/>}/>
           <Route
             path="/admin"
             element={
