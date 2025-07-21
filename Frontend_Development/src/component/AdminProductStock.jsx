@@ -12,7 +12,7 @@ const AdminProductStock = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await axiosInstance.get("/products/all");
+      const res = await axiosInstance.get("/api/products/all");
       setProducts(res.data);
     } catch (err) {
       console.error("Error fetching products:", err);

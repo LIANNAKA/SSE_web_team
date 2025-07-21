@@ -8,7 +8,7 @@ const AdminBannerUploader = () => {
 
   const fetchBanners = async () => {
   try {
-    const res = await axiosInstance.get("/banner"); 
+    const res = await axiosInstance.get("/api/banner"); 
     setBanners(res.data);
   } catch (err) {
     console.error("Error fetching banners:", err);
