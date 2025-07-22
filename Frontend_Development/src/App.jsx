@@ -22,6 +22,11 @@ import MyOrder from "./component/UserProfileDashboard/MyOrder";
 import MyProfile from "./component/UserProfileDashboard/MyProfile";
 import UserSideBar from "./component/UserProfileDashboard/UserSideBar";
 import Wishlist from "./component/UserProfileDashboard/Wishlist";
+import Checkout from "./component/Checkout";
+import CheckoutShipping from "./component/checkoutlayout/Shippingaddress";
+import CheckoutBill from "./component/checkoutlayout/TotalBill";
+import CheckoutOrder from "./component/checkoutlayout/PlaceOrder";
+import CheckoutPage from "./component/Checkout";
 
 
 
@@ -53,6 +58,9 @@ function App() {
           <Route path="/offers" element={<MyOffer/>}/>
           <Route path="/offers" element={<UserSideBar/>}/>
           <Route path="/address" element={<MyAddress/>}/>
+          <Route path="/checkout/shipping" element={<CheckoutShipping />} />
+          <Route path="/checkout/bill" element={<CheckoutBill />} />
+          <Route path="/checkout/order" element={<CheckoutOrder />} />
           <Route
             path="/admin"
             element={
@@ -66,6 +74,7 @@ function App() {
         </Routes>
       </main>
       <Footer />
+      <CheckoutPage />
       {showLoginModal && <LoginModal setShowLoginModal={setShowLoginModal} />}
       <ForgotPasswordModal />
     </div>
