@@ -22,8 +22,7 @@ import MyOrder from "./component/UserProfileDashboard/MyOrder";
 import MyProfile from "./component/UserProfileDashboard/MyProfile";
 import UserSideBar from "./component/UserProfileDashboard/UserSideBar";
 import Wishlist from "./component/UserProfileDashboard/Wishlist";
-import CleaningProducts from "./component/ProductPage/CleaningProducts";
-import StationaryProducts from "./component/ProductPage/StationaryProducts";
+
 
 
 
@@ -54,8 +53,6 @@ function App() {
           <Route path="/offers" element={<MyOffer/>}/>
           <Route path="/offers" element={<UserSideBar/>}/>
           <Route path="/address" element={<MyAddress/>}/>
-          <Route path="/cleaning-products" element={<CleaningProducts />} />
-          <Route path="/stationary-products" element={<StationaryProducts />} />
           <Route
             path="/admin"
             element={
