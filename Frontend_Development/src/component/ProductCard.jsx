@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const ProductCard = ({ product }) => {
+  
   const [quantity, setQuantity] = useState(1);
   const navigate = useNavigate();
-
+  
+  if (!product) return null;
   const handleDecrease = () => {
     if (quantity > 1) setQuantity(quantity - 1);
   };
