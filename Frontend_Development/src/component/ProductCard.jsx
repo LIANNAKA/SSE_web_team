@@ -1,167 +1,100 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Card, Row, Col, Spinner, Alert, Form, Button } from "react-bootstrap";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
+const ProductCard = ({ product }) => {
+  const [quantity, setQuantity] = useState(1);
+  const navigate = useNavigate();
 
-const ProductCard = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [searchTerm] = useState("");
-  const [quantities, setQuantities] = useState({});
-  const [cart, setCart] = useState({});
+  const handleDecrease = () => {
+    if (quantity > 1) setQuantity(quantity - 1);
+  };
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/products/all");
-        setProducts(response.data);
+  const handleIncrease = () => {
+    setQuantity(quantity + 1);
+  };
 
-        const initialQuantities = {};
-        response.data.forEach((prod) => {
-          initialQuantities[prod.productId] = 1;
-        });
-        setQuantities(initialQuantities);
-      } catch (err) {
-        setError("Failed to fetch products",err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-const handleQuantityChange = (id, delta) => {
-  setQuantities((prev) => {
-    const newQty = Math.max(1, (prev[id] || 1) + delta);
-    return {
-      ...prev,
-      [id]: newQty,
-    };
-  });
-};
-
-
-  const handleAddToCart = (product, quantity) => {
-  setCart((prevCart) => {
-    const existingItem = prevCart[product.productId];
-    const updatedQuantity = existingItem ? existingItem.quantity + 1 : quantity;
-    return {
-      ...prevCart,
-      [product.productId]: {
-        ...product,
-        quantity: updatedQuantity,
+  const handleBuy = () => {
+    navigate("/checkout", {
+      state: {
+        product,
+        quantity,
       },
-    };
-  });
-
-  console.log("Cart:", cart);
-};
-
-const handleBuy = async (product) => {
-  const quantity = quantities[product.productId];
-  handleAddToCart(product, quantity);
-
-  try {
-    await axios.post(`http://localhost:5000/api/products/buy/${product.productId}`, {
-      quantity
     });
-    alert('Purchase Successful');
-  } catch (err) {
-    console.error('Purchase failed', err);
-    alert('Purchase Failed');
-  }
-};
-
-
-  const filteredProducts = products.filter(
-    (prod) =>
-      prod.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      prod.productId.toString().includes(searchTerm)
-  );
+  };
 
   return (
-    <div>
-      {/* <Form.Control
-        type="text"
-        placeholder="Search by Name or ID"
-        className="mb-4"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      /> */}
+    // Use Bootstrap 'col' classes if used inside a row for even better responsiveness!
+    <div className="container px-1">
+      <div className="card h-100 text-center shadow-sm rounded-4" style={{border: "none"}}>
+        <img
+          src={product.image}
+          className="card-img-top img-fluid"
+          alt={product.name}
+          style={{
+            height: "150px",
+            objectFit: "cover",
+            width: "100%",
+            borderTopLeftRadius: "1rem",
+            borderTopRightRadius: "1rem"
+          }}
+        />
+        <div className="card-body p-3 p-sm-4">
+          <h6 className="card-title text-start mb-2" style={{fontSize: "1.1rem"}}>{product.name}</h6>
+          <p
+            className="card-text text-start mb-3"
+            style={{
+              // Adaptive font size for small screens
+              fontSize: "0.9rem",
+              minHeight: "2.2em"
+            }}
+          >
+            {product.description.split(" ").slice(0, 17).join(" ")}
+          </p>
 
-      {loading && <Spinner animation="border" />}
+          <div className="d-flex justify-content-center align-items-center mb-3 flex-wrap">
+            <button
+              className="btn btn-sm btn-outline-secondary"
+              onClick={handleDecrease}
+              style={{minWidth: '32px'}}
+            >
+              -
+            </button>
+            <span className="mx-2 fw-bold" style={{fontSize: "1rem"}}>{quantity}</span>
+            <button
+              className="btn btn-sm btn-outline-secondary"
+              onClick={handleIncrease}
+              style={{minWidth: '32px'}}
+            >
+              +
+            </button>
+          </div>
+          <button
+            className="btn btn-success w-100"
+            style={{
+              fontSize: "1rem",
+              padding: "8px 0"
+            }}
+            onClick={handleBuy}
+          >
+            Buy
+          </button>
+        </div>
+      </div>
 
-      {error && <Alert variant="danger">{error}</Alert>}
-
-      {!loading && filteredProducts.length === 0 && (
-        <Alert variant="info">No products found.</Alert>
-      )}
-
-      <Row
-        xs={2}
-        sm={3}
-        md={4}
-        lg={5}
-        className="px-3 gy-3 gx-3 gx-sm-3 gx-md-4 px-lg-4"
-      >
-        {!loading &&
-          filteredProducts.map((prod) => (
-            <Col key={prod.productId}>
-              <Card
-                className="h-100 shadow"
-                style={{ width: "100%", maxWidth: "250px", margin: "0 auto" }}
-              >
-                <Card.Img
-                className="ps-3 pe-0"
-                variant="top"
-                src={`http://localhost:5000${prod.imageUrl}`}
-                alt={prod.name}
-                style={{height: "150px" , width: "150px"}}
-                onError={(e) => { e.target.src = '/default-product.png'; }}  // fallback optional
-              />
-
-                <Card.Body className="p-2 d-flex flex-column justify-content-between">
-                  <div>
-                    <Card.Title className="fs-6">{prod.name}</Card.Title>
-                    <Card.Text
-                      className="mb-1 text-muted"
-                      style={{ fontSize: "0.9rem" }}
-                    >
-                      Price: ₹{prod.price}
-                    </Card.Text>
-                  </div>
-                  <div className="d-flex align-items-center justify-content-between mt-2">
-                    <Button
-                      variant="outline-secondary"
-                      size="sm"
-                      onClick={() => handleQuantityChange(prod.productId, -1)}
-                    >
-                      -
-                    </Button>
-                    <span className="mx-2">{quantities[prod.productId]}</span>
-                    <Button
-                      variant="outline-secondary"
-                      size="sm"
-                      onClick={() => handleQuantityChange(prod.productId, 1, true)}
-                    >
-                      +
-                    </Button>
-                  </div>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    className="mt-3"
-                    onClick={() => handleBuy(prod)}
-                  >
-                    Buy
-                  </Button>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-      </Row>
+      {/* Extra improvements for small screens */}
+      <style>{`
+        @media (max-width: 575.98px) {
+          .card-body {
+            padding: 1rem !important;
+          }
+          .card-title {
+            font-size: 1rem !important;
+          }
+          .card-text {
+            font-size: .9rem !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };
