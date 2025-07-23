@@ -26,12 +26,18 @@ const ProductDetail = () => {
   if (error) return <p style={{ color: "red" }}>{error}</p>;
   if (!product) return <p>Loading product...</p>;
 
-   // Handler for Buy button click
-  const handleBuyClick = () => {
-    // You might want to add the product to cart here before redirect,
-    // or handle cart adding separately in the /cart page
-    navigate("/cart");
-  };
+  const handleBuyClick = async () => {
+  try {
+    await axiosInstance.post('/cart', {
+      productId: product.productId,
+      quantity: 1,
+    });
+    navigate('/cart');
+  } catch (err) {
+    alert('Failed to add product to cart',err);
+  }
+};
+
 
   return (
     <div className="container mt-4">
