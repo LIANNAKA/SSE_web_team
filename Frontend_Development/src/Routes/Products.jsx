@@ -13,7 +13,7 @@ const ProductPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/products")
+    fetch("http://localhost:5000/api/products/all")
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
