@@ -8,7 +8,8 @@ import {
   restockProduct ,
   buyProduct,
   getProductsByCategory,
-  deleteProductByProductId
+  deleteProductByProductId,
+  searchProducts,
 } from '../controllers/productController.js';
 import upload from '../middleware/upload.js';  
 
@@ -17,6 +18,7 @@ const router = express.Router();
 router.post('/add-product', upload.single('image'), createProduct);
 router.get('/all', getProducts);
 // router.get('/', getProducts);
+router.get('/search', searchProducts);
 router.get('/:id', getProductById);    
 router.put('/update-by-productid/:productId', updateProductByProductId);
 router.get('/admin/stock', getProductStockStats); 

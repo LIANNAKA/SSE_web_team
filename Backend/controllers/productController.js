@@ -58,7 +58,7 @@ export const getProducts = async (req, res) => {
 // Read one
 export const getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findOne({ productId: req.params.productId });
     if (!product) return res.status(404).json({ error: 'Product not found' });
     res.json(product);
   } catch (err) {
@@ -171,6 +171,28 @@ export const getProductsByCategory = async (req, res) => {
 };
 
 
+export const searchProducts = async (req, res) => {
+  try {
+    const query = req.query.q;
+    if (!query || !query.trim()) {
+      return res.status(400).json({ error: "Invalid search query" });
+    }
+
+    // Search by name or description (case-insensitive)
+    const results = await Product.find({
+      $or: [
+        { name: { $regex: query, $options: "i" } },
+        { description: { $regex: query, $options: "i" } },
+        { productId: { $regex: query, $options: "i" } },
+      ]
+    });
+
+    res.json(results);
+  } catch (err) {
+    console.error("Error in searchProducts:", err);
+    res.status(500).json({ error: "Search failed", details: err.message });
+  }
+};
 
 
 

@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const ProductPage = () => {
-  const [products, setProducts] = useState([]);
+  const [_products, setProducts] = useState([]);
   const [stationary, setStationary] = useState([]);
   const [cleaning, setCleaning] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/products")
+    fetch("http://localhost:5000/api/products/all")
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);

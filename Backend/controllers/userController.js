@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 
 // get user by id
 export const getUserById = async (req, res) => {
@@ -112,9 +113,17 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
     
-    // 3. Success response
+  // Generate JWT token here
+    const token = jwt.sign(
+      { userId: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    //Send token with response
     res.status(200).json({
       message: 'Login successful',
+      token,
       user: {
         user_id: user._id,
         name: user.name,
@@ -122,6 +131,7 @@ export const loginUser = async (req, res) => {
         mobile: user.mobile
       }
     });
+
   } catch (err) {
     res.status(500).json({ error: 'Login failed', details: err.message });
   }
@@ -191,13 +201,18 @@ export const getUsers = async (req, res) => {
 // Get logged-in user's address
 export const getOwnProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select('address');
+    const user = await User.findById(req.user._id).select('address company companyAddress');
     if (!user) return res.status(404).json({ error: 'User not found' });
-    res.json({ address: user.address || '' });
+    res.json({
+      address: user.address || "",
+      company: user.company || "",
+      companyAddress: user.companyAddress || ""
+    });
   } catch (err) {
-    res.status(500).json({ error: 'Error fetching address' });
+    res.status(500).json({ error: 'Error fetching profile' });
   }
 };
+
 
 // Update logged-in user's address
 export const updateAddress = async (req, res) => {
@@ -214,5 +229,23 @@ export const updateAddress = async (req, res) => {
     res.json({ message: 'Address updated successfully' });
   } catch (err) {
     res.status(500).json({ error: 'Error updating address' });
+  }
+};
+
+export const updateAddressAndCompany = async (req, res) => {
+  try {
+    const { address, company, companyAddress } = req.body;
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    if (address !== undefined) user.address = address;
+    if (company !== undefined) user.company = company;
+    if (companyAddress !== undefined) user.companyAddress = companyAddress;
+
+    await user.save();
+
+    res.json({ message: 'Profile updated successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Error updating profile' });
   }
 };

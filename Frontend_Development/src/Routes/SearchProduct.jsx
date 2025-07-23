@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../axiosInstance"
 
 const SearchResults = () => {
   const [results, setResults] = useState([]);
@@ -18,10 +18,13 @@ const SearchResults = () => {
     }
     setLoading(true);
     setError("");
-    axios
-      .get(`http://localhost:5500/api/products/search?q=${encodeURIComponent(query)}`)
+    axiosInstance.get(`/api/products/search?q=${query}`)
       .then((res) => setResults(res.data))
-      .catch((err) => setError("Error fetching results. Please try again later.",err))
+      .catch((err) => {
+  console.error("Search error:", err);
+  setError("Error fetching results. Please try again later.");
+})
+
       .finally(() => setLoading(false));
   }, [query]);
 
@@ -44,7 +47,7 @@ const SearchResults = () => {
       )}
       <div className="row">
         {results.map((product) => (
-          <div className="col-md-4 mb-4" key={product.id || product._id}>
+          <div key={product.productId} className="col-md-4 mb-4">
             <div className="card h-100">
               <img
                 src={product.image}
@@ -57,7 +60,7 @@ const SearchResults = () => {
                 <h5 className="card-title">{product.name}</h5>
                 <p className="card-text">{product.description}</p>
                 <div className="mt-auto">
-                  <Link to={`/product/${product.id || product._id}`} className="btn btn-primary">
+                  <Link to={`/product/${product.productId}`} className="btn btn-primary">
                     View Details
                   </Link>
                 </div>
