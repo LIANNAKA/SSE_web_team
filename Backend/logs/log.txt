@@ -8,3 +8,4 @@
 [2025-07-23T07:51:44.297Z] Product purchased: Glue Stick 15 gm Fevi Quick | Qty: 1 | Remaining stock: 7 | Total sold: 2
 [2025-07-23T11:31:10.050Z] Product purchased: Glue Stick 15 gm Fevi Quick | Qty: 1 | Remaining stock: 6 | Total sold: 3
 [2025-07-23T11:31:20.871Z] Product purchased: Glue Stick 15 gm Fevi Quick | Qty: 2 | Remaining stock: 4 | Total sold: 5
+[2025-07-23T14:01:59.567Z] Product purchased: Cotton duster | Qty: 1 | Remaining stock: 4 | Total sold: 1
