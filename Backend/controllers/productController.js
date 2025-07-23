@@ -11,36 +11,45 @@ const generateProductId = (name) => {
 // Create/Add a new product
 export const createProduct = async (req, res) => {
   try {
-    const { name, description, price, category, stock } = req.body;
+    const { name, description, company, price, stock, category } = req.body;
+
+    if (!name || !price || !category || !req.file) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
     const productId = generateProductId(name);
+    const imageUrl = `/uploads/${req.file.filename}`;
 
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+    const numericPrice = parseFloat(price);
+    const numericStock = parseInt(stock, 10);
 
-    console.log('Product Data Debug:', {
-      name, description, price, category, stock, file: req.file
-    });
+    if (isNaN(numericPrice) || (stock && isNaN(numericStock))) {
+      return res.status(400).json({ error: 'Invalid price or stock value' });
+    }
 
     const product = new Product({
       productId,
       name,
       description,
-      price,
+      company,
+      price: numericPrice,
+      stock: stock ? numericStock : 0,
       category,
-      stock,
-      imageUrl
+      imageUrl,
     });
 
     await product.save();
 
     res.status(201).json({
       message: 'Product created successfully',
-      product
+      product,
     });
   } catch (err) {
-    console.error("Error in createProduct:", err);
+    console.error('Error in createProduct:', err);
     res.status(500).json({ error: 'Error creating product', details: err.message });
   }
 };
+
 
 // Read all the list of product
 export const getProducts = async (req, res) => {

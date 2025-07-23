@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -21,10 +21,10 @@ const Cart = () => {
   }, []);
 
   // Update Quantity
-  const updateQuantity = (id, newQty) => {
+  const updateQuantity = (productId, newQty) => {
     if (newQty < 1) return;
 
-    fetch(`http://localhost:5000/api/cart/${id}`, {
+    fetch(`http://localhost:5000/api/cart/${productId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -35,7 +35,7 @@ const Cart = () => {
       .then((updatedItem) => {
         setCartItems((prevItems) =>
           prevItems.map((item) =>
-            item.id === id ? { ...item, quantity: updatedItem.quantity } : item
+            item.productId === productId ? { ...item, quantity: updatedItem.quantity } : item
           )
         );
       })
@@ -43,14 +43,12 @@ const Cart = () => {
   };
 
   // Remove Item
-  const removeFromCart = (id) => {
-    fetch(`http://localhost:5000/api/cart/${id}`, {
+  const removeFromCart = (productId) => {
+    fetch(`http://localhost:5000/api/cart/${productId}`, {
       method: "DELETE",
     })
       .then(() => {
-        setCartItems((prevItems) =>
-          prevItems.filter((item) => item.id !== id)
-        );
+        setCartItems((prevItems) => prevItems.filter((item) => item.productId !== productId));
       })
       .catch((err) => console.error("Error removing item:", err));
   };
@@ -75,10 +73,13 @@ const Cart = () => {
                 <div className="row g-0 align-items-center">
                   <div className="col-md-3">
                     <img
-                      src={item.image}
+                      src={`http://localhost:5000${item.image}`}
                       alt={item.name}
                       className="img-fluid rounded-start"
                       style={{ maxHeight: "120px", objectFit: "cover" }}
+                      onError={(e) => {
+                        e.target.src = "/default-product.png"; // fallback
+                      }}
                     />
                   </div>
                   <div className="col-md-9">
@@ -93,14 +94,18 @@ const Cart = () => {
                       <div className="d-flex align-items-center mb-2 gap-2">
                         <button
                           className="btn btn-outline-secondary btn-sm"
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          onClick={() =>
+                            updateQuantity(item.productId, item.quantity - 1)
+                          }
                         >
                           -
                         </button>
                         <span>{item.quantity}</span>
                         <button
                           className="btn btn-outline-secondary btn-sm"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          onClick={() =>
+                            updateQuantity(item.productId, item.quantity + 1)
+                          }
                         >
                           +
                         </button>
@@ -115,7 +120,7 @@ const Cart = () => {
                       {/* Remove Button */}
                       <button
                         className="btn btn-danger btn-sm mt-2"
-                        onClick={() => removeFromCart(item.id)}
+                        onClick={() => removeFromCart(item.productId)}
                       >
                         🗑 Remove
                       </button>
@@ -133,8 +138,9 @@ const Cart = () => {
                 <h4 className="card-title">Total Bill</h4>
                 <hr />
                 <p className="fs-5">₹ {calculateTotal()}</p>
-                <button className="btn btn-success w-100 mt-3"
-                        onClick={() => navigate("/checkout")}
+                <button
+                  className="btn btn-success w-100 mt-3"
+                  onClick={() => navigate("/checkout")}
                 >
                   Proceed to Checkout
                 </button>

@@ -4,7 +4,7 @@ import { Card, Row, Col, Spinner, Alert, Form, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 // const ProductCard = () => {
-  const ProductCard = ({ category = "all" }) => {
+const ProductCard = ({ category = "all" }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -32,7 +32,7 @@ import { Link } from "react-router-dom";
 
     fetchProducts();
   }, []);
-   // Filter products by searchTerm first 
+  // Filter products by searchTerm first
   let filteredBySearch = products.filter(
     (prod) =>
       prod.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -80,16 +80,17 @@ import { Link } from "react-router-dom";
     handleAddToCart(product, quantity);
 
     try {
-      await axiosInstance.post(`/products/buy/${product.productId}`, {
+      await axiosInstance.post(`/cart`, {
+        productId: product.productId,
         quantity,
       });
+
       alert("Purchase Successful");
     } catch (err) {
       console.error("Purchase failed", err);
       alert("Purchase Failed");
     }
   };
-
 
   return (
     <div>
