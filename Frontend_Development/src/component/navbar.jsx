@@ -73,7 +73,7 @@ const Navbar = ({ setShowLoginModal }) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
     debounceRef.current = setTimeout(() => {
-      fetch(`/api/search?q=${encodeURIComponent(searchQuery)}`)
+      fetch(`/api/products/search?q=${encodeURIComponent(searchQuery)}`)
         .then(res => res.json())
         .then(data => setSuggestions(data))
         .catch(() => setSuggestions([]));
@@ -90,7 +90,7 @@ const Navbar = ({ setShowLoginModal }) => {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-4 sticky-top">
       <Link className="navbar-brand d-flex flex-column" to="/">
         <span className="fw-bold fs-4">Shree Shyam</span>
         <span className="fs-6">Enterprises</span>
@@ -127,7 +127,7 @@ const Navbar = ({ setShowLoginModal }) => {
           >
             {suggestions.map((suggestion) => (
               <li
-                key={suggestion.id}
+                key={suggestion.productId}
                 className="list-group-item list-group-item-action"
                 style={{ cursor: "pointer" }}
                 onClick={() => handleSuggestionClick(suggestion)}
