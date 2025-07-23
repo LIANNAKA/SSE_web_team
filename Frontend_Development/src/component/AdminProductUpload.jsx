@@ -77,8 +77,8 @@ const AdminProductUpdate = ({ isUpdate = false, existingData = {} }) => {
         className="mt-4 border border-black"
       >
         <option value="">Select Category</option>
-        <option value="stationary">Stationary</option>
-        <option value="cleaning">Cleaning</option>
+        <option value="Stationary">Stationary</option>
+        <option value="Cleaning">Cleaning</option>
         <option value="Adhesives">Adhesives</option>
         <option value="Calculator">Calculator</option>
         <option value="Disposable Items">Disposable Items</option>
