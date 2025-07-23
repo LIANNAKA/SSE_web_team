@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 import { Card, Row, Col, Spinner, Alert, Form, Button } from "react-bootstrap";
-
+import { Link } from "react-router-dom";
 
 const ProductCard = () => {
   const [products, setProducts] = useState([]);
@@ -14,7 +14,7 @@ const ProductCard = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/products/all");
+        const response = await axiosInstance.get("/products/all");
         setProducts(response.data);
 
         const initialQuantities = {};
@@ -23,7 +23,7 @@ const ProductCard = () => {
         });
         setQuantities(initialQuantities);
       } catch (err) {
-        setError("Failed to fetch products",err);
+        setError("Failed to fetch products", err);
       } finally {
         setLoading(false);
       }
@@ -32,48 +32,48 @@ const ProductCard = () => {
     fetchProducts();
   }, []);
 
-const handleQuantityChange = (id, delta) => {
-  setQuantities((prev) => {
-    const newQty = Math.max(1, (prev[id] || 1) + delta);
-    return {
-      ...prev,
-      [id]: newQty,
-    };
-  });
-};
-
+  const handleQuantityChange = (id, delta) => {
+    setQuantities((prev) => {
+      const newQty = Math.max(1, (prev[id] || 1) + delta);
+      return {
+        ...prev,
+        [id]: newQty,
+      };
+    });
+  };
 
   const handleAddToCart = (product, quantity) => {
-  setCart((prevCart) => {
-    const existingItem = prevCart[product.productId];
-    const updatedQuantity = existingItem ? existingItem.quantity + 1 : quantity;
-    return {
-      ...prevCart,
-      [product.productId]: {
-        ...product,
-        quantity: updatedQuantity,
-      },
-    };
-  });
-
-  console.log("Cart:", cart);
-};
-
-const handleBuy = async (product) => {
-  const quantity = quantities[product.productId];
-  handleAddToCart(product, quantity);
-
-  try {
-    await axios.post(`http://localhost:5000/api/products/buy/${product.productId}`, {
-      quantity
+    setCart((prevCart) => {
+      const existingItem = prevCart[product.productId];
+      const updatedQuantity = existingItem
+        ? existingItem.quantity + 1
+        : quantity;
+      return {
+        ...prevCart,
+        [product.productId]: {
+          ...product,
+          quantity: updatedQuantity,
+        },
+      };
     });
-    alert('Purchase Successful');
-  } catch (err) {
-    console.error('Purchase failed', err);
-    alert('Purchase Failed');
-  }
-};
 
+    console.log("Cart:", cart);
+  };
+
+  const handleBuy = async (product) => {
+    const quantity = quantities[product.productId];
+    handleAddToCart(product, quantity);
+
+    try {
+      await axiosInstance.post(`/products/buy/${product.productId}`, {
+        quantity,
+      });
+      alert("Purchase Successful");
+    } catch (err) {
+      console.error("Purchase failed", err);
+      alert("Purchase Failed");
+    }
+  };
 
   const filteredProducts = products.filter(
     (prod) =>
@@ -114,17 +114,27 @@ const handleBuy = async (product) => {
                 style={{ width: "100%", maxWidth: "250px", margin: "0 auto" }}
               >
                 <Card.Img
-                className="ps-3 pe-0"
-                variant="top"
-                src={`http://localhost:5000${prod.imageUrl}`}
-                alt={prod.name}
-                style={{height: "150px" , width: "150px"}}
-                onError={(e) => { e.target.src = '/default-product.png'; }}  // fallback optional
-              />
+                  className="ps-3 pe-0"
+                  variant="top"
+                  src={`http://localhost:5000${prod.imageUrl}`}
+                  alt={prod.name}
+                  style={{ height: "150px", width: "150px" }}
+                  onError={(e) => {
+                    e.target.src = "/default-product.png";
+                  }} // fallback optional
+                />
 
                 <Card.Body className="p-2 d-flex flex-column justify-content-between">
                   <div>
-                    <Card.Title className="fs-6">{prod.name}</Card.Title>
+                    <Card.Title className="fs-6">
+                      <Link
+                        to={`/product/${prod.productId}`}
+                        style={{ textDecoration: "none" }}
+                      >
+                        {prod.name}
+                      </Link>
+                    </Card.Title>
+
                     <Card.Text
                       className="mb-1 text-muted"
                       style={{ fontSize: "0.9rem" }}
@@ -144,7 +154,9 @@ const handleBuy = async (product) => {
                     <Button
                       variant="outline-secondary"
                       size="sm"
-                      onClick={() => handleQuantityChange(prod.productId, 1, true)}
+                      onClick={() =>
+                        handleQuantityChange(prod.productId, 1, true)
+                      }
                     >
                       +
                     </Button>

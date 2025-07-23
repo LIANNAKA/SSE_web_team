@@ -1,20 +1,28 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const ProductPage = () => {
-  const [_products, setProducts] = useState([]);
-  const [stationary, setStationary] = useState([]);
-  const [cleaning, setCleaning] = useState([]);
+  const location = useLocation();
+  // Determine view type from pathname
+  let category = "all";
+  if (location.pathname.includes("stationary")) category = "stationary";
+  else if (location.pathname.includes("cleaning")) category = "cleaning";
+
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/products/all")
+    fetch("http://localhost:5000/api/products")
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
-        setStationary(data.filter((item) => item.category === "stationary"));
-        setCleaning(data.filter((item) => item.category === "cleaning"));
+        setLoading(false);
       })
-      .catch((err) => console.error("Error fetching products:", err));
+      .catch((err) => {
+        console.error("Error fetching products:", err);
+        setLoading(false);
+      });
   }, []);
 
   const renderProducts = (items) => (
@@ -41,22 +49,32 @@ const ProductPage = () => {
     </div>
   );
 
+  // Filter products by category
+  let filtered, title;
+  if (category === "stationary") {
+    filtered = products.filter((p) => p.category === "stationary");
+    title = "🖊️ Stationary Products";
+  } else if (category === "cleaning") {
+    filtered = products.filter((p) => p.category === "cleaning");
+    title = "🧼 Cleaning Products";
+  } else {
+    filtered = products;
+    title = "🛒 All Products";
+  }
+
   return (
     <div className="container mt-4">
-      <h2 className="mb-3">🖊️ Stationary Products</h2>
-      {stationary.length > 0 ? (
-        renderProducts(stationary)
+      <h2 className="mb-3">{title}</h2>
+      {loading ? (
+        <div>Loading...</div>
+      ) : filtered.length > 0 ? (
+        renderProducts(filtered)
       ) : (
-        <p>No stationary products found.</p>
-      )}
-
-      <hr className="my-5" />
-
-      <h2 className="mb-3">🧼 Cleaning Products</h2>
-      {cleaning.length > 0 ? (
-        renderProducts(cleaning)
-      ) : (
-        <p>No cleaning products found.</p>
+        <p>
+          {category === "all"
+            ? "No products found."
+            : `No ${category} products found.`}
+        </p>
       )}
     </div>
   );

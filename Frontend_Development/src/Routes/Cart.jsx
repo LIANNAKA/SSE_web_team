@@ -1,14 +1,23 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import {useNavigate} from "react-router-dom";
 
 const Cart = () => {
+  const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch("http://localhost:5000/api/cart")
       .then((res) => res.json())
-      .then((data) => setCartItems(data))
-      .catch((err) => console.error("Error fetching cart:", err));
+      .then((data) => {
+        setCartItems(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching cart:", err);
+        setLoading(false);
+      });
   }, []);
 
   // Update Quantity
@@ -47,17 +56,15 @@ const Cart = () => {
   };
 
   // Calculate Total
-  const calculateTotal = () => {
-    return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
-  };
+  const calculateTotal = () =>
+    cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
     <div className="container mt-5">
       <h2 className="mb-4 text-center">🛒 Your Cart</h2>
-      {cartItems.length === 0 ? (
+      {loading ? (
+        <div className="text-center">Loading...</div>
+      ) : cartItems.length === 0 ? (
         <p className="text-center">Your cart is empty.</p>
       ) : (
         <div className="row">
@@ -77,6 +84,9 @@ const Cart = () => {
                   <div className="col-md-9">
                     <div className="card-body">
                       <h5 className="card-title">{item.name}</h5>
+                      <p className="card-text" style={{ minHeight: "2em" }}>
+                        {item.description || "No description available."}
+                      </p>
                       <p className="card-text mb-1">Price: ₹{item.price}</p>
 
                       {/* Quantity Controls */}
@@ -123,7 +133,11 @@ const Cart = () => {
                 <h4 className="card-title">Total Bill</h4>
                 <hr />
                 <p className="fs-5">₹ {calculateTotal()}</p>
-                <button className="btn btn-success w-100 mt-3">Proceed to Checkout</button>
+                <button className="btn btn-success w-100 mt-3"
+                        onClick={() => navigate("/checkout")}
+                >
+                  Proceed to Checkout
+                </button>
               </div>
             </div>
           </div>
