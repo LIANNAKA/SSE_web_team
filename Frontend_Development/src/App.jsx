@@ -30,6 +30,7 @@ import CheckoutPage from "./component/Checkout";
 import ProductDetail from "./Routes/ProductDetail";
 import SearchResults from "./Routes/SearchProduct";
 import ProductPage from "./Routes/Products";
+import ProductCard from "./component/ProductCard";
 
 function App() {
   const userRole = localStorage.getItem("userRole") || "guest";
@@ -64,19 +65,23 @@ function App() {
           <Route path="/checkout/bill" element={<CheckoutBill />} />
           <Route path="/checkout/order" element={<CheckoutOrder />} />
           <Route path="/product/:productId" element={<ProductDetail />} />
+          
 
-
-          <Route
+          {/* <Route
             path="/all-products"
             element={<ProductPage category="all" />}
+          /> */}
+          <Route
+            path="/all-products"
+            element={<ProductCard category="all" />}
           />
           <Route
             path="/stationary-products"
-            element={<ProductPage category="stationary" />}
+            element={<ProductCard category="stationary" />}
           />
           <Route
             path="/cleaning-products"
-            element={<ProductPage category="cleaning" />}
+            element={<ProductCard category="cleaning" />}
           />
           <Route
             path="/admin"

@@ -3,7 +3,8 @@ import axiosInstance from "../axiosInstance";
 import { Card, Row, Col, Spinner, Alert, Form, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-const ProductCard = () => {
+// const ProductCard = () => {
+  const ProductCard = ({ category = "all" }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -31,6 +32,20 @@ const ProductCard = () => {
 
     fetchProducts();
   }, []);
+   // Filter products by searchTerm first 
+  let filteredBySearch = products.filter(
+    (prod) =>
+      prod.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      prod.productId.toString().includes(searchTerm)
+  );
+
+  // Then filter by category prop
+  const filteredProducts = filteredBySearch.filter((prod) => {
+    if (category === "all" || !category) {
+      return true;
+    }
+    return prod.category === category;
+  });
 
   const handleQuantityChange = (id, delta) => {
     setQuantities((prev) => {
@@ -75,11 +90,6 @@ const ProductCard = () => {
     }
   };
 
-  const filteredProducts = products.filter(
-    (prod) =>
-      prod.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      prod.productId.toString().includes(searchTerm)
-  );
 
   return (
     <div>
