@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 
 const ProductDetail = () => {
-  const { id: productId } = useParams();
+  const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [error, setError] = useState("");
 

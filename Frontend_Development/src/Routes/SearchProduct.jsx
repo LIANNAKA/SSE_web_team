@@ -20,7 +20,8 @@ const SearchResults = () => {
     setError("");
 
     axiosInstance
-      .get(`/api/products/search?q=${query}`)
+      // .get(`/api/products/search?q=${query}`)
+      .get(`/products/search?q=${query}`)
       .then((res) => {
         console.log("Search API result:", res.data);
         setResults(res.data);
