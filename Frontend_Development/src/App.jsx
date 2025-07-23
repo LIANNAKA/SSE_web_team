@@ -1,17 +1,17 @@
-import Navbar from "./component/navbar"
-import { Routes,Route,Navigate } from "react-router-dom";
+import Navbar from "./component/navbar";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./Routes/Home";
 import Cart from "./Routes/Cart";
 import Products from "./Routes/Products";
 import Login from "./Routes/Login";
-import Footer from "./component/Footer"
+import Footer from "./component/Footer";
 import AdminLogin from "./Routes/AdminLogin";
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import LoginModal from "./component/LoginModal";
 import ForgotPasswordModal from "./component/ForgotPasswordModel";
 import AdminDashboard from "./Routes/AdminDashboard";
-import UserOrderPlace from "./component/UserOrderPlace"
+import UserOrderPlace from "./component/UserOrderPlace";
 import { useState } from "react";
 import AdminBannerUploader from "./component/AdminBannerUploader";
 import AdminProductStock from "./component/AdminProductStock";
@@ -27,10 +27,9 @@ import CheckoutShipping from "./component/checkoutlayout/Shippingaddress";
 import CheckoutBill from "./component/checkoutlayout/TotalBill";
 import CheckoutOrder from "./component/checkoutlayout/PlaceOrder";
 import CheckoutPage from "./component/Checkout";
-
-
-
-import SearchProduct from "./Routes/SearchProduct";
+import ProductDetail from "./Routes/ProductDetail";
+import SearchResults from "./Routes/SearchProduct";
+import ProductPage from "./Routes/Products";import SearchProduct from "./Routes/SearchProduct";
 import ProtectedRoute from "./utils/protectedRoute";
 
 
@@ -39,9 +38,8 @@ function App() {
     const [showLoginModal, setShowLoginModal] = useState(false);
 
 
-    return(
-
-      <div className="app-wrapper">
+  return (
+    <div className="app-wrapper">
       <Navbar setShowLoginModal={setShowLoginModal} />
 
       <main>
@@ -52,19 +50,22 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/adminlogin" element={<AdminLogin />} />
           <Route path="/adminorderstatus" element={<UserOrderPlace />} />
-          <Route path="/admin/banner-upload" element={<AdminBannerUploader />} />
+          <Route
+            path="/admin/banner-upload"
+            element={<AdminBannerUploader />}
+          />
           <Route path="/admin/stock" element={<AdminProductStock />} />
-          <Route path="/userdashboard" element={<UserDashboard/>}/>
-          <Route path="/profile" element={<MyProfile/>}/>
-          <Route path="/orders" element={<MyOrder/>}/>
-          <Route path="/wishlist" element={<Wishlist/>}/>
-          <Route path="/offers" element={<MyOffer/>}/>
-          <Route path="/sidebar" element={<UserSideBar/>}/>
-          <Route path="/address" element={<MyAddress/>}/>
+          <Route path="/userdashboard" element={<UserDashboard />} />
+          <Route path="/profile" element={<MyProfile />} />
+          <Route path="/orders" element={<MyOrder />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/offers" element={<MyOffer />} />
+          <Route path="/sidebar" element={<UserSideBar />} />
+          <Route path="/address" element={<MyAddress />} />
+          <Route path="/search" element={<SearchResults />} />
           <Route path="/checkout/shipping" element={<CheckoutShipping />} />
           <Route path="/checkout/bill" element={<CheckoutBill />} />
           <Route path="/checkout/order" element={<CheckoutOrder />} />
-          <Route path="/search" element={<SearchProduct/>}/>
           <Route
           path="/admin"
           element={

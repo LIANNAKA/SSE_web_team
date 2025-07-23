@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { NavDropdown } from "react-bootstrap";
 import { FaBars, FaTimes } from "react-icons/fa";
 import UserProfileDropDown from "../component/UserProfileDropDownMenu";
 
@@ -155,9 +156,17 @@ const Navbar = ({ setShowLoginModal }) => {
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link px-4" to="/about" onClick={() => setIsOpen(false)}>
-              Products
-            </Link>
+            <NavDropdown title="Products" id="products-dropdown">
+              <NavDropdown.Item as={Link} to="/all-products">
+                All Products
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/stationary-products">
+                Stationary Products
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/cleaning-products ">
+                Cleaning Products
+              </NavDropdown.Item>
+            </NavDropdown>
           </li>
           <li className="nav-item">
             <Link className="nav-link px-4" to="/cart" onClick={() => setIsOpen(false)}>
