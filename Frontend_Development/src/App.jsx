@@ -63,7 +63,8 @@ function App() {
           <Route path="/checkout/shipping" element={<CheckoutShipping />} />
           <Route path="/checkout/bill" element={<CheckoutBill />} />
           <Route path="/checkout/order" element={<CheckoutOrder />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/product/:productId" element={<ProductDetail />} />
+
 
           <Route
             path="/all-products"

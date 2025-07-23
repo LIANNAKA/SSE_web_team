@@ -86,7 +86,7 @@ const Navbar = ({ setShowLoginModal }) => {
     setShowSuggestions(false);
     setSearchQuery(""); // Optional: clear box or set to product.name
     // Navigate to product page (edit path per your routing)
-    navigate(`/product/${product.id}`);
+    navigate(`/product/${product.productId}`);
     setIsOpen(false);
   };
 
@@ -163,7 +163,7 @@ const Navbar = ({ setShowLoginModal }) => {
               <NavDropdown.Item as={Link} to="/stationary-products">
                 Stationary Products
               </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/cleaning-products ">
+              <NavDropdown.Item as={Link} to="/cleaning-products">
                 Cleaning Products
               </NavDropdown.Item>
             </NavDropdown>

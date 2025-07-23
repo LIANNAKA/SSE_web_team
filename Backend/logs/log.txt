@@ -6,3 +6,5 @@
 [2025-07-13T05:03:55.407Z] Product purchased: Ball Pen | Qty: 1 | Remaining stock: 111 | Total sold: 1
 [2025-07-13T07:12:45.681Z] Product restocked: Ball Pen | Added: 4 | New stock: 115
 [2025-07-23T07:51:44.297Z] Product purchased: Glue Stick 15 gm Fevi Quick | Qty: 1 | Remaining stock: 7 | Total sold: 2
+[2025-07-23T11:31:10.050Z] Product purchased: Glue Stick 15 gm Fevi Quick | Qty: 1 | Remaining stock: 6 | Total sold: 3
+[2025-07-23T11:31:20.871Z] Product purchased: Glue Stick 15 gm Fevi Quick | Qty: 2 | Remaining stock: 4 | Total sold: 5

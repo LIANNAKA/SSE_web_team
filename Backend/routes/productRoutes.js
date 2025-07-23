@@ -19,7 +19,7 @@ router.post('/add-product', upload.single('image'), createProduct);
 router.get('/all', getProducts);
 // router.get('/', getProducts);
 router.get('/search', searchProducts);
-router.get('/:id', getProductById);    
+router.get('/:productId', getProductById);   
 router.put('/update-by-productid/:productId', updateProductByProductId);
 router.get('/admin/stock', getProductStockStats); 
 router.post('/buy/:productId', buyProduct);
