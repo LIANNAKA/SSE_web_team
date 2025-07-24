@@ -69,7 +69,7 @@ const Cart = () => {
           {/* Cart Items */}
           <div className="col-md-8">
             {cartItems.map((item) => (
-              <div key={item.id} className="card mb-3 shadow-sm">
+              <div key={item.productId} className="card mb-3 shadow-sm">
                 <div className="row g-0 align-items-center">
                   <div className="col-md-3">
                     <img

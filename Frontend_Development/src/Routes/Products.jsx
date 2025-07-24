@@ -5,9 +5,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 const ProductPage = () => {
   const location = useLocation();
   // Determine view type from pathname
-  let category = "all";
-  if (location.pathname.includes("stationary")) category = "stationary";
-  else if (location.pathname.includes("cleaning")) category = "cleaning";
+let category = "all";
+if (location.pathname.includes("stationary-products")) category = "stationary";
+else if (location.pathname.includes("cleaning-products")) category = "cleaning";
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -52,15 +52,12 @@ const ProductPage = () => {
   // Filter products by category
   let filtered, title;
   if (category === "stationary") {
-    filtered = products.filter((p) => p.category === "stationary");
-    title = "🖊️ Stationary Products";
-  } else if (category === "cleaning") {
-    filtered = products.filter((p) => p.category === "cleaning");
-    title = "🧼 Cleaning Products";
-  } else {
-    filtered = products;
-    title = "🛒 All Products";
-  }
+  filtered = products.filter((p) => (p.category || "").toLowerCase() === "stationary");
+  title = "🖊️ Stationary Products";
+} else if (category === "cleaning") {
+  filtered = products.filter((p) => (p.category || "").toLowerCase() === "cleaning");
+  title = "🧼 Cleaning Products";
+}
 
   return (
     <div className="container mt-4">
