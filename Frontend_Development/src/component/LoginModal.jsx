@@ -70,7 +70,7 @@ function LoginModal({ setShowLoginModal }) {
     }
 
     try {
-      const { data } = await axiosInstance.post("/api/users/login", {
+      const { data } = await axiosInstance.post("/users/login", {
         email: loginEmail,
         password: loginPassword,
       });
