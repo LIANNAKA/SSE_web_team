@@ -163,7 +163,7 @@ const Navbar = ({ setShowLoginModal }) => {
           </li>
           <li className="nav-item">
             <NavDropdown title="Products" id="products-dropdown">
-              <NavDropdown.Item as={Link} to="/all-products">
+              <NavDropdown.Item as={Link} to="/products/all">
                 All Products
               </NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/products/stationary">

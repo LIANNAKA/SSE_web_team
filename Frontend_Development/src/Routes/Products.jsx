@@ -56,7 +56,7 @@ else if (location.pathname.includes("cleaning-products")) category = "cleaning";
   title = "🖊️ Stationary Products";
 } else if (category === "cleaning") {
   filtered = products.filter((p) => (p.category || "").toLowerCase() === "cleaning");
-  title = "🧼 Cleaning Products";
+  title = "Cleaning Products";
 }
 
   return (

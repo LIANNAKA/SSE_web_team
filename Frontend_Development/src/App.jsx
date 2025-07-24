@@ -31,6 +31,9 @@ import ProductDetail from "./Routes/ProductDetail";
 import SearchResults from "./Routes/SearchProduct";
 import ProductPage from "./Routes/Products";
 import ProductCard from "./component/ProductCard";
+import AllProduct from "./component/ProductDropdownKey/AllProduct"
+import StationaryProduct from "./component/ProductDropdownKey/StationaryProduct"
+import CleaningProduct from "./component/ProductDropdownKey/CleaningProduct"
 
 function App() {
   const userRole = localStorage.getItem("userRole") || "guest";
@@ -43,7 +46,6 @@ function App() {
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/about" element={<Products />} />
           <Route path="/about" element={<Products />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/login" element={<Login />} />
@@ -66,21 +68,26 @@ function App() {
           <Route path="/checkout/bill" element={<CheckoutBill />} />
           <Route path="/checkout/order" element={<CheckoutOrder />} />
           <Route path="/product/:productId" element={<ProductDetail />} />
-          
+          <Route path="/products/all" element={<AllProduct />} />
+          <Route path="/products/stationary" element={<StationaryProduct />} />
+          <Route path="/products/cleaning" element={<CleaningProduct />} />
 
           {/* <Route
             path="/all-products"
             element={<ProductPage category="all" />}
           /> */}
-          <Route
+          {/* <Route
             path="/all-products"
             element={<ProductCard category="all" />}
           />
-          <Route path="/products/stationary" element={<Products category="Stationary" />} />
+          <Route
+            path="/products/stationary"
+            element={<Products category="Stationary" />}
+          />
           <Route
             path="/cleaning-products"
             element={<ProductCard category="cleaning" />}
-          />
+          /> */}
           <Route
             path="/admin"
             element={
@@ -94,7 +101,7 @@ function App() {
         </Routes>
       </main>
       <Footer />
-      <CheckoutPage />
+      {/* <CheckoutPage /> */}
       {showLoginModal && <LoginModal setShowLoginModal={setShowLoginModal} />}
       <ForgotPasswordModal />
     </div>
