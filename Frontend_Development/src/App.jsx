@@ -22,7 +22,7 @@ import MyOrder from "./component/UserProfileDashboard/MyOrder";
 import MyProfile from "./component/UserProfileDashboard/MyProfile";
 import UserSideBar from "./component/UserProfileDashboard/UserSideBar";
 import Wishlist from "./component/UserProfileDashboard/Wishlist";
-import Checkout from "./component/Checkout";
+import CheckoutLayout from "./component/checkoutlayout/CheckoutLayout";
 import CheckoutShipping from "./component/checkoutlayout/Shippingaddress";
 import CheckoutBill from "./component/checkoutlayout/TotalBill";
 import CheckoutOrder from "./component/checkoutlayout/PlaceOrder";
@@ -31,9 +31,9 @@ import ProductDetail from "./Routes/ProductDetail";
 import SearchResults from "./Routes/SearchProduct";
 import ProductPage from "./Routes/Products";
 import ProductCard from "./component/ProductCard";
-import AllProduct from "./component/ProductDropdownKey/AllProduct"
-import StationaryProduct from "./component/ProductDropdownKey/StationaryProduct"
-import CleaningProduct from "./component/ProductDropdownKey/CleaningProduct"
+import AllProduct from "./component/ProductDropdownKey/AllProduct";
+import StationaryProduct from "./component/ProductDropdownKey/StationaryProduct";
+import CleaningProduct from "./component/ProductDropdownKey/CleaningProduct";
 
 function App() {
   const userRole = localStorage.getItem("userRole") || "guest";
@@ -64,9 +64,12 @@ function App() {
           <Route path="/offers" element={<UserSideBar />} />
           <Route path="/address" element={<MyAddress />} />
           <Route path="/search" element={<SearchResults />} />
-          <Route path="/checkout/shipping" element={<CheckoutShipping />} />
-          <Route path="/checkout/bill" element={<CheckoutBill />} />
-          <Route path="/checkout/order" element={<CheckoutOrder />} />
+          <Route path="/checkout" element={<CheckoutLayout />}>
+            <Route index element={<Navigate to="shipping" replace />} />
+            <Route path="shipping" element={<CheckoutShipping />} />
+            <Route path="bill" element={<CheckoutBill />} />
+            <Route path="order" element={<CheckoutOrder />} />
+          </Route>
           <Route path="/product/:productId" element={<ProductDetail />} />
           <Route path="/products/all" element={<AllProduct />} />
           <Route path="/products/stationary" element={<StationaryProduct />} />
@@ -101,7 +104,7 @@ function App() {
         </Routes>
       </main>
       <Footer />
-      {/* <CheckoutPage /> */}
+      <CheckoutPage />
       {showLoginModal && <LoginModal setShowLoginModal={setShowLoginModal} />}
       <ForgotPasswordModal />
     </div>
