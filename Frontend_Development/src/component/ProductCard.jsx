@@ -15,7 +15,7 @@ const ProductCard = ({ category = "all" }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axiosInstance.get("/products/all");
+        const response = await axiosInstance.get("/products");
         setProducts(response.data);
 
         const initialQuantities = {};

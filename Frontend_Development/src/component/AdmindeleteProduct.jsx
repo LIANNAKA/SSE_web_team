@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
 
+
 const AdmindeleteProducts = () => {
   const [products, setProducts] = useState([]);
 
@@ -11,7 +12,7 @@ const AdmindeleteProducts = () => {
 
   const fetchProducts = async () => {
     try {
-      const res = await axiosInstance.get("/api/products/all");
+      const res = await axiosInstance.get("/products/all");
       setProducts(res.data);
     } catch (err) {
       console.error("Error fetching products:", err);
@@ -22,7 +23,7 @@ const AdmindeleteProducts = () => {
   const handleDelete = async (productId) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
-        await axiosInstance.delete(`/api/products/${productId}`);
+        await axiosInstance.delete(`/products/${productId}`);
         fetchProducts(); // Refresh list
       } catch (err) {
         console.error("Error deleting product:", err);
