@@ -44,6 +44,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<Products />} />
+          <Route path="/about" element={<Products />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/login" element={<Login />} />
           <Route path="/adminlogin" element={<AdminLogin />} />
@@ -75,10 +76,7 @@ function App() {
             path="/all-products"
             element={<ProductCard category="all" />}
           />
-          <Route
-            path="/stationary-products"
-            element={<ProductCard category="stationary" />}
-          />
+          <Route path="/products/stationary" element={<Products category="Stationary" />} />
           <Route
             path="/cleaning-products"
             element={<ProductCard category="cleaning" />}

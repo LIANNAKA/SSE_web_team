@@ -11,9 +11,9 @@ const Navbar = ({ setShowLoginModal }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [userName, setUserName] = useState(() => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  return user?.name || "";
-});
+    const user = JSON.parse(localStorage.getItem("user"));
+    return user?.name || "";
+  });
 
   const [isOpen, setIsOpen] = useState(false);
   const searchRef = useRef();
@@ -34,11 +34,11 @@ const Navbar = ({ setShowLoginModal }) => {
 
   useEffect(() => {
     const handleStorageChange = () => {
-  const updatedToken = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user"));
-  setIsLoggedIn(!!updatedToken);
-  setUserName(user?.name || "");
-};
+      const updatedToken = localStorage.getItem("token");
+      const user = JSON.parse(localStorage.getItem("user"));
+      setIsLoggedIn(!!updatedToken);
+      setUserName(user?.name || "");
+    };
 
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
@@ -75,8 +75,8 @@ const Navbar = ({ setShowLoginModal }) => {
 
     debounceRef.current = setTimeout(() => {
       fetch(`/api/products/search?q=${encodeURIComponent(searchQuery)}`)
-        .then(res => res.json())
-        .then(data => setSuggestions(data))
+        .then((res) => res.json())
+        .then((data) => setSuggestions(data))
         .catch(() => setSuggestions([]));
     }, 250);
   }, [searchQuery]);
@@ -118,7 +118,9 @@ const Navbar = ({ setShowLoginModal }) => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           aria-label="Search"
-          onFocus={() => { if (searchQuery) setShowSuggestions(true); }}
+          onFocus={() => {
+            if (searchQuery) setShowSuggestions(true);
+          }}
         />
         {/* Suggestions Dropdown */}
         {showSuggestions && suggestions.length > 0 && (
@@ -151,7 +153,11 @@ const Navbar = ({ setShowLoginModal }) => {
       <div className={`collapse navbar-collapse ${isOpen ? "show" : ""}`}>
         <ul className="navbar-nav ms-auto mb-2 mb-lg-0 px-4">
           <li className="nav-item">
-            <Link className="nav-link px-4" to="/" onClick={() => setIsOpen(false)}>
+            <Link
+              className="nav-link px-4"
+              to="/"
+              onClick={() => setIsOpen(false)}
+            >
               Home
             </Link>
           </li>
@@ -160,16 +166,20 @@ const Navbar = ({ setShowLoginModal }) => {
               <NavDropdown.Item as={Link} to="/all-products">
                 All Products
               </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/stationary-products">
-                Stationary Products
+              <NavDropdown.Item as={Link} to="/products/stationary">
+                Stationary
               </NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/cleaning-products">
-                Cleaning Products
+              <NavDropdown.Item as={Link} to="/products/cleaning">
+                Cleaning
               </NavDropdown.Item>
             </NavDropdown>
           </li>
           <li className="nav-item">
-            <Link className="nav-link px-4" to="/cart" onClick={() => setIsOpen(false)}>
+            <Link
+              className="nav-link px-4"
+              to="/cart"
+              onClick={() => setIsOpen(false)}
+            >
               Cart
             </Link>
           </li>
