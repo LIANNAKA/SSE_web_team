@@ -104,7 +104,6 @@ function App() {
         </Routes>
       </main>
       <Footer />
-      <CheckoutPage />
       {showLoginModal && <LoginModal setShowLoginModal={setShowLoginModal} />}
       <ForgotPasswordModal />
     </div>
