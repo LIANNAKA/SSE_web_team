@@ -31,7 +31,7 @@ const MyAddress = () => {
       return;
     }
     axiosInstance
-      .get("/api/users/profile")
+      .get("/users/profile")
       .then((res) => {
         setAddress(res.data.address || "");
         setUpdatedAddress(res.data.address || "");
@@ -55,7 +55,7 @@ const MyAddress = () => {
     }
 
     axiosInstance
-      .put("/api/users/update-address-company", { address: updatedAddress })
+      .put("/users/update-address-company", { address: updatedAddress })
       .then(() => {
         setAddress(updatedAddress);
         setMessage("✅ Address updated successfully!");
@@ -72,7 +72,7 @@ const MyAddress = () => {
       return;
     }
     axiosInstance
-      .put("/api/users/update-address-company", {
+      .put("/users/update-address-company", {
         company: updatedCompany,
         companyAddress: updatedCompanyAddress,
       })
