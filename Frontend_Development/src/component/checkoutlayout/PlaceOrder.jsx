@@ -39,23 +39,24 @@ const CheckoutOrder = () => {
     setError("");
     
     const token = localStorage.getItem("token");
-
+    
     const orderPayload = {
-  orderItems: cartItems.map(item => ({
-    name: item.name,
-    qty: item.quantity,
-    price: item.price,
-    product: item.producId, // make sure this exists
-  })),
-  shippingAddress: {
-    address: shipping.address,
-    city: "Unknown", // or add a field to collect this
-    postalCode: "000000",
-    country: "India",
-  },
-  paymentMethod: "Cash on Delivery", // or make this dynamic
-  totalPrice: totalBill,
-};
+      orderItems: cartItems.map(item => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        product: item.productId, 
+      })),
+      shippingAddress: {
+        address: shipping.address,
+        city: "Unknown", // or add a field to collect this
+        postalCode: "000000",
+        country: "India",
+      },
+      paymentMethod: "Cash on Delivery", // or make this dynamic
+      totalPrice: totalBill,
+    };
+    console.log('orderPayload', orderPayload);
 
     try {
       const res = await fetch("http://localhost:5000/api/orders", {
@@ -70,8 +71,8 @@ const CheckoutOrder = () => {
       setMessage("Order placed successfully!");
       localStorage.removeItem("checkoutShipping");
       navigate("/thank-you");
-    } catch {
-      setError("Order failed. Try again.");
+    }  catch(e) {
+  setError(e.message || "Order failed. Try again.");
     } finally {
       setOrderSending(false);
     }
