@@ -1,6 +1,14 @@
 // src/UserProfileDashboard/MyOrders.jsx
 import React, { useEffect, useState } from "react";
-import { Container, Card, Table, Tabs, Tab, Spinner, Alert } from "react-bootstrap";
+import {
+  Container,
+  Card,
+  Table,
+  Tabs,
+  Tab,
+  Spinner,
+  Alert,
+} from "react-bootstrap";
 import axios from "axios";
 
 const MyOrders = () => {
@@ -18,16 +26,23 @@ const MyOrders = () => {
       })
       .then((res) => {
         const allOrders = res.data;
-
+console.log("📦 Raw orders from backend:", allOrders);
         // Filter into current and past based on status
-        const current = allOrders.filter(order =>
-          ["pending", "processing", "shipped"].includes(order.status)
+        const current = allOrders.filter((order) =>
+          ["pending", "processing", "shipped"].includes(
+            order.status?.toLowerCase()
+          )
         );
+        allOrders.forEach((order, i) =>
+  console.log(`Order ${i + 1} status:`, order.status)
+);
 
-        const past = allOrders.filter(order =>
-          ["delivered", "cancelled"].includes(order.status)
+console.log("🟢 Current Orders after filtering:", current);
+
+        const past = allOrders.filter((order) =>
+          ["delivered", "cancelled"].includes(order.status?.toLowerCase())
         );
-
+console.log("🔴 Past Orders after filtering:", past);
         setCurrentOrders(current);
         setPastOrders(past);
         setLoading(false);
@@ -39,35 +54,54 @@ const MyOrders = () => {
       });
   }, []);
 
-  const renderOrderTable = (orders) => (
-    <Table striped bordered hover responsive>
-      <thead>
-        <tr>
-          <th>Order ID</th>
-          <th>Items</th>
-          <th>Total Amount</th>
-          <th>Status</th>
-          <th>Ordered On</th>
-        </tr>
-      </thead>
-      <tbody>
-        {orders.map((order, index) => (
-          <tr key={index}>
-            <td>{order.orderId}</td>
-            <td>
-              {order.items.map((item, i) => (
-                <div key={i}>{item.name} × {item.quantity}</div>
-              ))}
-            </td>
-            <td>₹{order.total}</td>
-            <td className={`text-capitalize fw-semibold ${order.status === "cancelled" ? "text-danger" : order.status === "delivered" ? "text-success" : "text-primary"}`}>
-              {order.status}
-            </td>
-            <td>{new Date(order.orderedAt).toLocaleDateString()}</td>
-          </tr>
-        ))}
-      </tbody>
-    </Table>
+  const renderOrderCards = (orders) => (
+    <>
+      {orders.map((order, index) => (
+        <Card key={index} className="mb-4 shadow-sm">
+          <Card.Header className="d-flex justify-content-between align-items-center">
+            <div>
+              <b>Order ID:</b> {order.orderId || "N/A"} <br />
+              <b>Status:</b>{" "}
+              <span
+                className={`text-capitalize fw-semibold ${
+                  order.status === "cancelled"
+                    ? "text-danger"
+                    : order.status === "delivered"
+                    ? "text-success"
+                    : "text-primary"
+                }`}
+              >
+                {order.status}
+              </span>
+            </div>
+            <div className="text-muted">
+              {new Date(order.orderedAt).toLocaleDateString()}
+            </div>
+          </Card.Header>
+
+          <Card.Body>
+            {Array.isArray(order.items) && order.items.length > 0 ? (
+              order.items.map((item, i) => (
+                <Card key={i} className="mb-3 shadow-sm">
+                  <Card.Body>
+                    <Card.Title>{item.name}</Card.Title>
+                    <Card.Text>
+                      Quantity: {item.quantity} <br />
+                      Price: ₹{item.price} <br />
+                      Subtotal: ₹{item.price * item.quantity}
+                    </Card.Text>
+                  </Card.Body>
+                </Card>
+              ))
+            ) : (
+              <p className="text-muted">No items in this order.</p>
+            )}
+
+            <div className="text-end fw-bold mt-2">Total: ₹{order.total}</div>
+          </Card.Body>
+        </Card>
+      ))}
+    </>
   );
 
   if (loading) {
@@ -88,14 +122,14 @@ const MyOrders = () => {
         <Tabs defaultActiveKey="current" className="mb-3" fill>
           <Tab eventKey="current" title="📦 Current Orders">
             {currentOrders.length > 0 ? (
-              renderOrderTable(currentOrders)
+              renderOrderCards(currentOrders)
             ) : (
               <p>No active orders at the moment.</p>
             )}
           </Tab>
           <Tab eventKey="past" title="📜 Order History">
             {pastOrders.length > 0 ? (
-              renderOrderTable(pastOrders)
+              renderOrderCards(pastOrders)
             ) : (
               <p>No past orders found.</p>
             )}
