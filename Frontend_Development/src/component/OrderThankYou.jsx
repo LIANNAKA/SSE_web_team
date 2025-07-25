@@ -7,7 +7,7 @@ const OrderThankYou = () => {
   const navigate = useNavigate();
 
   const goToOrders = () => {
-    navigate("/dashboard", { state: { section: "Order" } });
+    navigate("/userdashboard", { state: { section: "order" } });
   };
 
   return (

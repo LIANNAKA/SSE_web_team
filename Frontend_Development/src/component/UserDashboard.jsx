@@ -1,35 +1,37 @@
-import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import UserSideBar from "./UserProfileDashboard/UserSideBar";
-import MyProfile from "./UserProfileDashboard/MyProfile";
-import MyAddress from "./UserProfileDashboard/MyAddress";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import UserSidebar from "./UserProfileDashboard/UserSidebar";
 import MyOrder from "./UserProfileDashboard/MyOrder";
+import MyAddress from "./UserProfileDashboard/MyAddress";
+import MyProfile from "./UserProfileDashboard/MyProfile";
 import Wishlist from "./UserProfileDashboard/Wishlist";
 import MyOffer from "./UserProfileDashboard/MyOffer";
-import { useLocation } from "react-router-dom";
-
-
 
 const UserDashboard = () => {
   const location = useLocation();
-  const initialSection = location.state?.section || "Profile";
-  const [activeSection, setActiveSection] = useState(initialSection);
 
+  // Normalize to lowercase
+  const sectionFromState = location.state?.section?.toLowerCase() || "profile";
+  const [activeSection, setActiveSection] = useState(sectionFromState);
 
-  // Dynamically load components based on sidebar selection
+  useEffect(() => {
+    // Update section if navigation state changes after mount
+    if (location.state?.section) {
+      setActiveSection(location.state.section.toLowerCase());
+    }
+  }, [location.state?.section]);
+
   const renderContent = () => {
     switch (activeSection) {
       case "profile":
         return <MyProfile />;
-      case "Address":
+      case "address":
         return <MyAddress />;
-      case "Order":
+      case "order":
         return <MyOrder />;
-      case "Offers":
+      case "offers":
         return <MyOffer />;
-      case "UserSideBar":
-        return <UserSideBar />;
-      case "Wishlist":
+      case "wishlist":
         return <Wishlist />;
       default:
         return <MyProfile />;
@@ -38,12 +40,10 @@ const UserDashboard = () => {
 
   return (
     <div className="d-flex" style={{ minHeight: "100vh" }}>
-      {/* Sidebar */}
       <div style={{ width: "250px" }} className="bg-light border-end">
-        <UserSideBar setActiveSection={setActiveSection} />
+        <UserSidebar setActiveSection={setActiveSection} />
       </div>
 
-      {/* Main Content */}
       <div className="flex-grow-1 p-4">{renderContent()}</div>
     </div>
   );

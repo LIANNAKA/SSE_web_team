@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Container, Card, Row, Col, Spinner, Alert } from "react-bootstrap";
 import axios from "axios";
-// import UserSideBar from "./UserSideBar";
+import UserSidebar from "./UserSidebar";
 
 const MyOffers = () => {
   const [offers, setOffers] = useState([]);
@@ -32,7 +32,7 @@ const MyOffers = () => {
 
   return (
     <div className="d-flex">
-      <UserSideBar />
+      <UserSidebar />
 
       <Container className="my-4 flex-grow-1">
         <h2 className="mb-4 fw-bold">Available Offers</h2>

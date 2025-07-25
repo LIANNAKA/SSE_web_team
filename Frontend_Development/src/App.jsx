@@ -20,7 +20,7 @@ import MyAddress from "./component/UserProfileDashboard/MyAddress";
 import MyOffer from "./component/UserProfileDashboard/MyOffer";
 import MyOrder from "./component/UserProfileDashboard/MyOrder";
 import MyProfile from "./component/UserProfileDashboard/MyProfile";
-import UserSideBar from "./component/UserProfileDashboard/UserSideBar";
+import UserSidebar from "./component/UserProfileDashboard/UserSidebar";
 import Wishlist from "./component/UserProfileDashboard/Wishlist";
 import CheckoutLayout from "./component/checkoutlayout/CheckoutLayout";
 import CheckoutShipping from "./component/checkoutlayout/Shippingaddress";
@@ -62,7 +62,7 @@ function App() {
           <Route path="/orders" element={<MyOrder />} />
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/offers" element={<MyOffer />} />
-          <Route path="/offers" element={<UserSideBar />} />
+          <Route path="/offers" element={<UserSidebar />} />
           <Route path="/address" element={<MyAddress />} />
           <Route path="/search" element={<SearchResults />} />
           <Route path="/checkout" element={<CheckoutLayout />}>

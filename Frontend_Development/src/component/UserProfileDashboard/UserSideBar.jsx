@@ -4,40 +4,41 @@ const UserSidebar = ({ setActiveSection }) => {
   return (
     <div className="bg-light border-end h-100 p-3">
       <h5 className="mb-4 text-uppercase">User Panel</h5>
+
       <button
         className="btn btn-link d-block text-start text-decoration-none text-uppercase text-dark"
-        onClick={() => setActiveSection("Profile")}
+        onClick={() => setActiveSection("profile")}
       >
         Profile
       </button>
       <button
         className="btn btn-link d-block text-start text-decoration-none text-uppercase text-dark"
-        onClick={() => setActiveSection("Address")}
+        onClick={() => setActiveSection("address")}
       >
         Address
       </button>
       <button
         className="btn btn-link d-block text-start text-decoration-none text-uppercase text-dark"
-        onClick={() => setActiveSection("Order")}
+        onClick={() => setActiveSection("order")}
       >
         Orders
       </button>
       <button
         className="btn btn-link d-block text-start text-decoration-none text-uppercase text-dark"
-        onClick={() => setActiveSection("Offers")}
+        onClick={() => setActiveSection("offers")}
       >
-        My offers
+        My Offers
       </button>
       <button
         className="btn btn-link d-block text-start text-decoration-none text-uppercase text-dark"
-        onClick={() => setActiveSection("Wishlist")}
+        onClick={() => setActiveSection("wishlist")}
       >
-        wishlist
+        Wishlist
       </button>
-      
+
       <button
         className="btn btn-link d-block text-start text-danger text-decoration-none text-uppercase text-dark"
-        onClick={() => setActiveSection("Logout")}
+        onClick={() => setActiveSection("logout")}
       >
         Logout
       </button>
