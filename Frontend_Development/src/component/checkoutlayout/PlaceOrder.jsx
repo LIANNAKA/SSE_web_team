@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Container, Card, Button, Alert, Spinner, Table } from "react-bootstrap";
+import {
+  Container,
+  Card,
+  Button,
+  Alert,
+  Spinner,
+  Table,
+} from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 
 const CheckoutOrder = () => {
-  const [shipping, setShipping] = useState({ name: "", address: "", mobile: "" });
+  const [shipping, setShipping] = useState({
+    name: "",
+    address: "",
+    mobile: "",
+  });
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [orderSending, setOrderSending] = useState(false);
@@ -12,7 +23,11 @@ const CheckoutOrder = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("checkoutShipping")) || { name: "", address: "", mobile: "" };
+    const saved = JSON.parse(localStorage.getItem("checkoutShipping")) || {
+      name: "",
+      address: "",
+      mobile: "",
+    };
     setShipping(saved);
 
     fetch("http://localhost:5000/api/cart")
@@ -37,15 +52,15 @@ const CheckoutOrder = () => {
     setOrderSending(true);
     setMessage("");
     setError("");
-    
+
     const token = localStorage.getItem("token");
-    
+
     const orderPayload = {
-      orderItems: cartItems.map(item => ({
+      orderItems: cartItems.map((item) => ({
         name: item.name,
         quantity: item.quantity,
         price: item.price,
-        product: item.productId, 
+        product: item.productId,
       })),
       shippingAddress: {
         address: shipping.address,
@@ -55,31 +70,35 @@ const CheckoutOrder = () => {
       },
       paymentMethod: "Cash on Delivery", // or make this dynamic
       totalPrice: totalBill,
+      status: "pending", 
     };
-    console.log('orderPayload', orderPayload);
+    console.log("orderPayload", orderPayload);
 
     try {
       const res = await fetch("http://localhost:5000/api/orders", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  },
-  body: JSON.stringify(orderPayload),
-});
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(orderPayload),
+      });
       if (!res.ok) throw new Error("Order failed");
       setMessage("Order placed successfully!");
       localStorage.removeItem("checkoutShipping");
       navigate("/thank-you");
-    }  catch(e) {
-  setError(e.message || "Order failed. Try again.");
+    } catch (e) {
+      setError(e.message || "Order failed. Try again.");
     } finally {
       setOrderSending(false);
     }
   };
 
   return (
-    <Container className="min-vh-100 d-flex align-items-center justify-content-center p-2" style={{ background: "#f9f9f9" }}>
+    <Container
+      className="min-vh-100 d-flex align-items-center justify-content-center p-2"
+      style={{ background: "#f9f9f9" }}
+    >
       <Card className="p-4 shadow-sm w-100" style={{ maxWidth: 700 }}>
         <h2 className="mb-4 text-center fw-bold">Place Your Order</h2>
         <p>
@@ -89,7 +108,9 @@ const CheckoutOrder = () => {
         </p>
         <h5 className="mt-4">Items:</h5>
         {loading ? (
-          <div className="text-center"><Spinner animation="border" /></div>
+          <div className="text-center">
+            <Spinner animation="border" />
+          </div>
         ) : error ? (
           <Alert variant="danger">{error}</Alert>
         ) : (
@@ -110,7 +131,9 @@ const CheckoutOrder = () => {
                 </tr>
               ))}
               <tr className="fw-bold">
-                <td colSpan="2" className="text-end">Total:</td>
+                <td colSpan="2" className="text-end">
+                  Total:
+                </td>
                 <td>₹{totalBill}</td>
               </tr>
             </tbody>
@@ -121,7 +144,10 @@ const CheckoutOrder = () => {
         {error && <Alert variant="danger">{error}</Alert>}
 
         <div className="d-flex justify-content-between">
-          <Link className="btn btn-outline-secondary flex-fill me-2" to="/checkout/bill">
+          <Link
+            className="btn btn-outline-secondary flex-fill me-2"
+            to="/checkout/bill"
+          >
             Back
           </Link>
           <Button
