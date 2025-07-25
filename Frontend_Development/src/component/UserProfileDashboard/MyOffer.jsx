@@ -32,7 +32,7 @@ const MyOffers = () => {
 
   return (
     <div className="d-flex">
-      <UserSidebar />
+      {/* <UserSidebar /> */}
 
       <Container className="my-4 flex-grow-1">
         <h2 className="mb-4 fw-bold">Available Offers</h2>
