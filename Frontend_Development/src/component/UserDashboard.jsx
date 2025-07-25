@@ -6,10 +6,15 @@ import MyAddress from "./UserProfileDashboard/MyAddress";
 import MyOrder from "./UserProfileDashboard/MyOrder";
 import Wishlist from "./UserProfileDashboard/Wishlist";
 import MyOffer from "./UserProfileDashboard/MyOffer";
+import { useLocation } from "react-router-dom";
+
 
 
 const UserDashboard = () => {
-  const [activeSection, setActiveSection] = useState("Profile");
+  const location = useLocation();
+  const initialSection = location.state?.section || "Profile";
+  const [activeSection, setActiveSection] = useState(initialSection);
+
 
   // Dynamically load components based on sidebar selection
   const renderContent = () => {

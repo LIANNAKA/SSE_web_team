@@ -34,6 +34,7 @@ import ProductCard from "./component/ProductCard";
 import AllProduct from "./component/ProductDropdownKey/AllProduct";
 import StationaryProduct from "./component/ProductDropdownKey/StationaryProduct";
 import CleaningProduct from "./component/ProductDropdownKey/CleaningProduct";
+import OrderThankYou from "./component/OrderThankYou";
 
 function App() {
   const userRole = localStorage.getItem("userRole") || "guest";
@@ -74,6 +75,7 @@ function App() {
           <Route path="/products/all" element={<AllProduct />} />
           <Route path="/products/stationary" element={<StationaryProduct />} />
           <Route path="/products/cleaning" element={<CleaningProduct />} />
+          <Route path="/thank-you" element={<OrderThankYou />} />
 
           {/* <Route
             path="/all-products"
