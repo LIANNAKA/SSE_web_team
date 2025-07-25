@@ -22,7 +22,6 @@ app.use('/api/products', productRoutes);
 app.use('/api/product-image', productImageRoutes);
 app.use('/uploads', express.static('uploads'));
 app.use('/api/banner', homePageRoutes); 
-app.use('/uploads', express.static('uploads'));
 app.use('/api/cart', cartRoutes);
 
 
