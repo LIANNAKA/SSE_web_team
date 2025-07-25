@@ -7,6 +7,7 @@ import productRoutes from './routes/productRoutes.js';
 import homePageRoutes from './routes/homePageRoutes.js';
 import productImageRoutes from './routes/productImageRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
 import cors from 'cors';
 
 dotenv.config();
@@ -24,6 +25,7 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/banner', homePageRoutes); 
 app.use('/uploads', express.static('uploads'));
 app.use('/api/cart', cartRoutes);
+app.use('/api/orders', orderRoutes);
 
 
   
