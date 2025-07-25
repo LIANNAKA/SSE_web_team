@@ -14,8 +14,14 @@ const CheckoutShipping = () => {
 
   // Fetch shipping info from backend on mount
   useEffect(() => {
-    fetch("http://localhost:5000/api/user/shipping-info")
+    const token = localStorage.getItem("token");
+    fetch("http://localhost:5000/api/users/shipping-info", {headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    }
+  })
       .then((res) => {
+        if (!res.ok) throw new Error("Failed to load shipping info");
         if (!res.ok) throw new Error("Failed to load shipping info");
         return res.json();
       })

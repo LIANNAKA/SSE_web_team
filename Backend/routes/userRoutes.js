@@ -21,6 +21,7 @@ router.get("/", getUsers);
 router.get("/profile", protect, getOwnProfile);
 router.get("/profile/:id", getUserProfile);
 router.put("/update-address-company", protect, updateAddressAndCompany);
+router.get("/shipping-info", protect, getOwnProfile);
 router.post("/login", loginUser);
 router.get("/:id", getUserById);
 router.put("/:id", updateUser);
