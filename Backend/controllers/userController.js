@@ -202,12 +202,12 @@ export const getUsers = async (req, res) => {
 // Get logged-in user's address
 export const getOwnProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select('address company companyAddress');
+    const user = await User.findById(req.user._id).select('name address mobile');
     if (!user) return res.status(404).json({ error: 'User not found' });
     res.json({
+      name: user.name || "",
       address: user.address || "",
-      company: user.company || "",
-      companyAddress: user.companyAddress || ""
+      mobile: user.mobile || ""
     });
   } catch (err) {
     res.status(500).json({ error: 'Error fetching profile' });
