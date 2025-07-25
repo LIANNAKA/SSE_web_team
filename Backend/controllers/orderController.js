@@ -9,7 +9,7 @@ export const createOrder = async (req, res) => {
     }
 
     const order = new Order({
-      user: req.user._id,
+      user: req.user.userId,
       orderItems,
       shippingAddress,
       paymentMethod,
@@ -26,7 +26,7 @@ export const createOrder = async (req, res) => {
 
 export const getMyOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user._id });
+    const orders = await Order.find({ user: req.user.userId });
     res.json(orders);
   } catch (err) {
     console.error(err);
