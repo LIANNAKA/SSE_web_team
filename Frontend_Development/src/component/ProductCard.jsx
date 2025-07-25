@@ -24,7 +24,7 @@ const ProductCard = ({ category = "all" }) => {
         });
         setQuantities(initialQuantities);
       } catch (err) {
-        setError("Failed to fetch products", err);
+        setError("Failed to fetch products: " + err.message);
       } finally {
         setLoading(false);
       }
