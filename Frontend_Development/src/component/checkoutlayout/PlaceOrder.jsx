@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Card, Button, Alert, Spinner } from "react-bootstrap";
+import { Container, Card, Button, Alert, Spinner, Table } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 
 const CheckoutOrder = () => {
@@ -11,13 +11,10 @@ const CheckoutOrder = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // Fetch shipping info & cart from backend/localStorage on mount
   useEffect(() => {
-    // Shipping info from previous step (could also come from backend!)
     const saved = JSON.parse(localStorage.getItem("checkoutShipping")) || { name: "", address: "", mobile: "" };
     setShipping(saved);
 
-    // Fetch cart items from backend
     fetch("http://localhost:5000/api/cart")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch cart");
@@ -31,7 +28,6 @@ const CheckoutOrder = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  // Calculate total bill from cartItems
   const totalBill = cartItems.reduce(
     (acc, item) => acc + (item.price || 0) * (item.quantity || 1),
     0
@@ -65,7 +61,7 @@ const CheckoutOrder = () => {
 
   return (
     <Container className="min-vh-100 d-flex align-items-center justify-content-center p-2" style={{ background: "#f9f9f9" }}>
-      <Card className="p-4 shadow-sm w-100" style={{ maxWidth: 480 }}>
+      <Card className="p-4 shadow-sm w-100" style={{ maxWidth: 700 }}>
         <h2 className="mb-4 text-center fw-bold">Place Your Order</h2>
         <p>
           <b>Name:</b> {shipping.name} <br />
@@ -78,21 +74,33 @@ const CheckoutOrder = () => {
         ) : error ? (
           <Alert variant="danger">{error}</Alert>
         ) : (
-          <ul className="list-group mb-3">
-            {cartItems.map((item, idx) => (
-              <li key={idx} className="list-group-item d-flex justify-content-between align-items-center">
-                {item.name} × {item.quantity}
-                <span>₹{item.quantity * item.price}</span>
-              </li>
-            ))}
-            <li className="list-group-item d-flex justify-content-between">
-              <strong>Total:</strong>
-              <strong>₹{totalBill}</strong>
-            </li>
-          </ul>
+          <Table bordered hover responsive className="mb-3">
+            <thead className="table-light">
+              <tr>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Price (₹)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cartItems.map((item, idx) => (
+                <tr key={idx}>
+                  <td>{item.name}</td>
+                  <td>{item.quantity}</td>
+                  <td>₹{item.quantity * item.price}</td>
+                </tr>
+              ))}
+              <tr className="fw-bold">
+                <td colSpan="2" className="text-end">Total:</td>
+                <td>₹{totalBill}</td>
+              </tr>
+            </tbody>
+          </Table>
         )}
+
         {message && <Alert variant="success">{message}</Alert>}
         {error && <Alert variant="danger">{error}</Alert>}
+
         <div className="d-flex justify-content-between">
           <Link className="btn btn-outline-secondary flex-fill me-2" to="/checkout/bill">
             Back

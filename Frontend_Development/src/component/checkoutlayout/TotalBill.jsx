@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Card, Button, Spinner, Alert } from "react-bootstrap";
+import { Container, Card, Button, Spinner, Alert, Table } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 
 const CheckoutBill = () => {
@@ -8,7 +8,6 @@ const CheckoutBill = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // Fetch cart from backend on mount
   useEffect(() => {
     fetch("http://localhost:5000/api/cart")
       .then((res) => {
@@ -23,7 +22,6 @@ const CheckoutBill = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  // Compute total from cart items
   const totalBill = cartItems.reduce(
     (acc, item) => acc + (item.price || 0) * (item.quantity || 1),
     0
@@ -35,7 +33,7 @@ const CheckoutBill = () => {
 
   return (
     <Container className="min-vh-100 d-flex align-items-center justify-content-center p-2" style={{ background: "#f9f9f9" }}>
-      <Card className="p-4 shadow-sm w-100" style={{ maxWidth: 480 }}>
+      <Card className="p-4 shadow-sm w-100" style={{ maxWidth: 700 }}>
         <h2 className="mb-4 text-center fw-bold">Order Summary</h2>
 
         {loading ? (
@@ -43,18 +41,28 @@ const CheckoutBill = () => {
         ) : error ? (
           <Alert variant="danger">{error}</Alert>
         ) : (
-          <ul className="list-group mb-3">
-            {cartItems.map((item, idx) => (
-              <li key={idx} className="list-group-item d-flex justify-content-between align-items-center">
-                {item.name} × {item.quantity}
-                <span>₹{item.quantity * item.price}</span>
-              </li>
-            ))}
-            <li className="list-group-item d-flex justify-content-between">
-              <strong>Total Bill:</strong>
-              <strong>₹{totalBill}</strong>
-            </li>
-          </ul>
+          <Table bordered hover responsive className="mb-4">
+            <thead className="table-light">
+              <tr>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Price (₹)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cartItems.map((item, idx) => (
+                <tr key={idx}>
+                  <td>{item.name}</td>
+                  <td>{item.quantity}</td>
+                  <td>₹{item.quantity * item.price}</td>
+                </tr>
+              ))}
+              <tr className="fw-bold">
+                <td colSpan="2" className="text-end">Total:</td>
+                <td>₹{totalBill}</td>
+              </tr>
+            </tbody>
+          </Table>
         )}
 
         <div className="d-flex justify-content-between">
