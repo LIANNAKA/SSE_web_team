@@ -14,7 +14,6 @@ const MyOrders = () => {
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/orders", {
-
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
