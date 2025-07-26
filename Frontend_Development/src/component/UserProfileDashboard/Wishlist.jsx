@@ -11,7 +11,7 @@ const Wishlist = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/user/wishlist", {
+      .get("http://localhost:5000/api/users/wishlist", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -27,11 +27,11 @@ const Wishlist = () => {
 
   const handleRemove = (productId) => {
     axios
-      .delete(`http://localhost:5000/api/user/wishlist/${productId}`, {
+      .delete(`http://localhost:5000/api/users/wishlist/${productId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(() => {
-        setWishlist(prev => prev.filter(item => item.id !== productId));
+        setWishlist(prev => prev.filter(item => item.productId !== productId && item._id !== productId));
         setMessage("Item removed from wishlist.");
       })
       .catch(err => {
@@ -58,8 +58,8 @@ const Wishlist = () => {
         <p>You have no items in your wishlist.</p>
       ) : (
         <Row>
-          {wishlist.map((item) => (
-            <Col md={6} lg={4} key={item.id} className="mb-4">
+         {wishlist.map((item) => (
+  <Col md={6} lg={4} key={item.productId || item._id}className="mb-4">
               <Card className="h-100 shadow-sm">
                 <Card.Img
                   variant="top"
@@ -71,10 +71,10 @@ const Wishlist = () => {
                   <Card.Text>{item.description}</Card.Text>
                   <Card.Text className="fw-bold text-success">₹{item.price}</Card.Text>
                   <Button
-                    variant="danger"
-                    onClick={() => handleRemove(item.id)}
-                    size="sm"
-                  >
+      variant="danger"
+      onClick={() => handleRemove(item.productId || item._id)}
+      size="sm"
+    >
                     Remove
                   </Button>
                 </Card.Body>

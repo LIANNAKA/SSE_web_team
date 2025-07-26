@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../axiosInstance";
 import { Card, Row, Col, Spinner, Alert, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const ProductCard = ({ category = "all" }) => {
@@ -10,6 +10,7 @@ const ProductCard = ({ category = "all" }) => {
   const [error, setError] = useState("");
   const [quantities, setQuantities] = useState({});
   const [wishlist, setWishlist] = useState([]);
+  const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -32,7 +33,7 @@ const ProductCard = ({ category = "all" }) => {
 
     const fetchWishlist = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/user/wishlist", {
+        const res = await axios.get("http://localhost:5000/api/users/wishlist", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const ids = res.data.map((item) => item.productId);
@@ -76,19 +77,20 @@ const ProductCard = ({ category = "all" }) => {
   const handleWishlistClick = async (productId) => {
     try {
       if (wishlist.includes(productId)) {
-        await axios.delete(`http://localhost:5000/api/user/wishlist/${productId}`, {
+        await axios.delete(`http://localhost:5000/api/users/wishlist/${productId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setWishlist((prev) => prev.filter((id) => id !== productId));
       } else {
         await axios.post(
-          `http://localhost:5000/api/user/wishlist`,
+          `http://localhost:5000/api/users/wishlist`,
           { productId },
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
         setWishlist((prev) => [...prev, productId]);
+        navigate("/wishlist");
       }
     } catch (err) {
       console.error("Wishlist action failed:", err);
