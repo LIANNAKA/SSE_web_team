@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../axiosInstance";
-import { Card, Row, Col, Spinner, Alert, Form, Button } from "react-bootstrap";
+import { Card, Row, Col, Spinner, Alert, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
-// const ProductCard = () => {
 const ProductCard = ({ category = "all" }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [searchTerm] = useState("");
   const [quantities, setQuantities] = useState({});
-  const [cart, setCart] = useState({});
+  const [wishlist, setWishlist] = useState([]);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -30,49 +30,31 @@ const ProductCard = ({ category = "all" }) => {
       }
     };
 
-    fetchProducts();
-  }, []);
-  // Filter products by searchTerm first
-  let filteredBySearch = products.filter(
-    (prod) =>
-      prod.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      prod.productId.toString().includes(searchTerm)
-  );
+    const fetchWishlist = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/user/wishlist", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const ids = res.data.map((item) => item.productId);
+        setWishlist(ids);
+      } catch (err) {
+        console.error("Error fetching wishlist:", err);
+      }
+    };
 
-  // Then filter by category prop
-  const filteredProducts = filteredBySearch.filter((prod) => {
-    if (category === "all" || !category) {
-      return true;
-    }
-    return prod.category === category;
-  });
+    fetchProducts();
+    fetchWishlist();
+  }, [token]);
 
   const handleQuantityChange = (id, delta) => {
-    setQuantities((prev) => {
-      const newQty = Math.max(1, (prev[id] || 1) + delta);
-      return {
-        ...prev,
-        [id]: newQty,
-      };
-    });
+    setQuantities((prev) => ({
+      ...prev,
+      [id]: Math.max(1, (prev[id] || 1) + delta),
+    }));
   };
 
   const handleAddToCart = (product, quantity) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart[product.productId];
-      const updatedQuantity = existingItem
-        ? existingItem.quantity + 1
-        : quantity;
-      return {
-        ...prevCart,
-        [product.productId]: {
-          ...product,
-          quantity: updatedQuantity,
-        },
-      };
-    });
-
-    console.log("Cart:", cart);
+    console.log("Added to cart:", product.productId, quantity);
   };
 
   const handleBuy = async (product) => {
@@ -80,11 +62,10 @@ const ProductCard = ({ category = "all" }) => {
     handleAddToCart(product, quantity);
 
     try {
-      await axiosInstance.post(`/cart`, {
+      await axiosInstance.post("/cart", {
         productId: product.productId,
         quantity,
       });
-
       alert("Purchase Successful");
     } catch (err) {
       console.error("Purchase failed", err);
@@ -92,21 +73,35 @@ const ProductCard = ({ category = "all" }) => {
     }
   };
 
-  return (
-    <div>
-      {/* <Form.Control
-        type="text"
-        placeholder="Search by Name or ID"
-        className="mb-4"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      /> */}
+  const handleWishlistClick = async (productId) => {
+    try {
+      if (wishlist.includes(productId)) {
+        await axios.delete(`http://localhost:5000/api/user/wishlist/${productId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setWishlist((prev) => prev.filter((id) => id !== productId));
+      } else {
+        await axios.post(
+          `http://localhost:5000/api/user/wishlist`,
+          { productId },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setWishlist((prev) => [...prev, productId]);
+      }
+    } catch (err) {
+      console.error("Wishlist action failed:", err);
+    }
+  };
 
+  return (
+    <div className="px-3">
       {loading && <Spinner animation="border" />}
 
       {error && <Alert variant="danger">{error}</Alert>}
 
-      {!loading && filteredProducts.length === 0 && (
+      {!loading && products.length === 0 && (
         <Alert variant="info">No products found.</Alert>
       )}
 
@@ -115,25 +110,57 @@ const ProductCard = ({ category = "all" }) => {
         sm={3}
         md={4}
         lg={5}
-        className="px-3 gy-3 gx-3 gx-sm-3 gx-md-4 px-lg-4"
+        className="gy-3 gx-3 gx-sm-3 gx-md-4"
       >
-        {!loading &&
-          filteredProducts.map((prod) => (
+        {products
+          .filter((prod) => category === "all" || prod.category === category)
+          .map((prod) => (
             <Col key={prod.productId}>
               <Card
-                className="h-100 shadow"
+                className="h-100 shadow-sm position-relative"
                 style={{ width: "100%", maxWidth: "250px", margin: "0 auto" }}
               >
                 <Card.Img
-                  className="ps-3 pe-0"
                   variant="top"
                   src={`http://localhost:5000${prod.imageUrl}`}
                   alt={prod.name}
-                  style={{ height: "150px", width: "150px" }}
+                  style={{ height: "150px", objectFit: "cover" }}
                   onError={(e) => {
                     e.target.src = "/default-product.png";
-                  }} // fallback optional
+                  }}
                 />
+
+                <button
+                  className="btn btn-light position-absolute"
+                  onClick={() => handleWishlistClick(prod.productId)}
+                  style={{
+                    top: "10px",
+                    right: "10px",
+                    zIndex: 2,
+                    borderRadius: "50%",
+                    padding: "0.4rem 0.5rem",
+                    fontSize: "1.3rem",
+                    boxShadow: "0 0 5px #ccc",
+                    border: "none",
+                  }}
+                  title={
+                    wishlist.includes(prod.productId)
+                      ? "Remove from wishlist"
+                      : "Add to wishlist"
+                  }
+                >
+                  <i
+                    className={
+                      wishlist.includes(prod.productId)
+                        ? "bi bi-heart-fill"
+                        : "bi bi-heart"
+                    }
+                    style={{
+                      color: "#e74c3c",
+                      fontSize: "1.3rem",
+                    }}
+                  ></i>
+                </button>
 
                 <Card.Body className="p-2 d-flex flex-column justify-content-between">
                   <div>
@@ -153,11 +180,14 @@ const ProductCard = ({ category = "all" }) => {
                       Price: ₹{prod.price}
                     </Card.Text>
                   </div>
+
                   <div className="d-flex align-items-center justify-content-between mt-2">
                     <Button
                       variant="outline-secondary"
                       size="sm"
-                      onClick={() => handleQuantityChange(prod.productId, -1)}
+                      onClick={() =>
+                        handleQuantityChange(prod.productId, -1)
+                      }
                     >
                       -
                     </Button>
@@ -166,12 +196,13 @@ const ProductCard = ({ category = "all" }) => {
                       variant="outline-secondary"
                       size="sm"
                       onClick={() =>
-                        handleQuantityChange(prod.productId, 1, true)
+                        handleQuantityChange(prod.productId, 1)
                       }
                     >
                       +
                     </Button>
                   </div>
+
                   <Button
                     variant="primary"
                     size="sm"
