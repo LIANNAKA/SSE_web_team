@@ -194,7 +194,7 @@ const Navbar = ({ setShowLoginModal }) => {
                 className="btn nav-link px-4 bg-transparent border-0"
                 onClick={() => setShowLoginModal(true)}
               >
-                Login
+                Login/SignUp
               </button>
             )}
           </li>
