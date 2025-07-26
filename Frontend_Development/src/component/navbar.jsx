@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { NavDropdown } from "react-bootstrap";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes, FaSearch } from "react-icons/fa";
 import UserProfileDropDown from "../component/UserProfileDropDownMenu";
 
 const Navbar = ({ setShowLoginModal }) => {
@@ -9,6 +9,7 @@ const Navbar = ({ setShowLoginModal }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [userName, setUserName] = useState(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -111,6 +112,10 @@ const Navbar = ({ setShowLoginModal }) => {
         autoComplete="off"
         ref={searchRef}
       >
+        {/* <span className="position-absolute top-50 end-0 translate-middle-y pe-3 text-muted">
+          <FaSearch />
+        </span> */}
+
         <input
           className="form-control"
           type="search"
@@ -121,6 +126,25 @@ const Navbar = ({ setShowLoginModal }) => {
           onFocus={() => {
             if (searchQuery) setShowSuggestions(true);
           }}
+          onKeyDown={(e) => {
+            if (suggestions.length === 0) return;
+            if (e.key === "ArrowDown") {
+              e.preventDefault();
+              setSelectedSuggestionIndex((prev) =>
+                prev < suggestions.length - 1 ? prev + 1 : 0
+              );
+            } else if (e.key === "ArrowUp") {
+              e.preventDefault();
+              setSelectedSuggestionIndex((prev) =>
+                prev > 0 ? prev - 1 : suggestions.length - 1
+              );
+            } else if (e.key === "Enter") {
+              if (selectedSuggestionIndex >= 0) {
+                e.preventDefault();
+                handleSuggestionClick(suggestions[selectedSuggestionIndex]);
+              }
+            }
+          }}
         />
         {/* Suggestions Dropdown */}
         {showSuggestions && suggestions.length > 0 && (
@@ -128,10 +152,12 @@ const Navbar = ({ setShowLoginModal }) => {
             className="list-group position-absolute w-100 shadow"
             style={{ zIndex: 2000, top: "100%" }}
           >
-            {suggestions.map((suggestion) => (
+            {suggestions.map((suggestion, index) => (
               <li
                 key={suggestion.productId}
-                className="list-group-item list-group-item-action"
+                className={`list-group-item list-group-item-action ${
+                  index === selectedSuggestionIndex ? "active" : ""
+                }`}
                 style={{ cursor: "pointer" }}
                 onClick={() => handleSuggestionClick(suggestion)}
               >
