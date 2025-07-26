@@ -53,60 +53,82 @@ const MyOrders = () => {
         setLoading(false);
       });
   }, []);
+  console.log("Current Orders:", currentOrders);
+  console.log("First Order Item:", currentOrders[0]?.orderItems?.[0]);
+  if (currentOrders.length > 0) {
+    console.log("First order item example:", currentOrders[0].orderItems);
+  }
 
- const renderOrderCards = (orders) => (
-  <>
-    {orders.map((order, index) => (
-      <Card key={index} className="mb-4 shadow-sm">
-        <Card.Header className="d-flex justify-content-between align-items-center">
-          <div>
-            <b>Order ID:</b> {order._id || "N/A"} <br />
-            <b>Status:</b>{" "}
-            <span
-              className={`text-capitalize fw-semibold ${
-                order.status === "cancelled"
-                  ? "text-danger"
-                  : order.status === "delivered"
-                  ? "text-success"
-                  : "text-primary"
-              }`}
-            >
-              {order.status}
-            </span>
-          </div>
-          <div className="text-muted">
-            {order.createdAt
-              ? new Date(order.createdAt).toLocaleDateString()
-              : "Date N/A"}
-          </div>
-        </Card.Header>
+  const renderOrderCards = (orders) => (
+    <>
+      {orders.map((order, index) => (
+        <Card key={index} className="mb-4 shadow-sm">
+          <Card.Header className="d-flex justify-content-between align-items-center">
+            <div>
+              <b>Order ID:</b> {order._id || "N/A"} <br />
+              <b>Status:</b>{" "}
+              <span
+                className={`text-capitalize fw-semibold ${
+                  order.status === "cancelled"
+                    ? "text-danger"
+                    : order.status === "delivered"
+                    ? "text-success"
+                    : "text-primary"
+                }`}
+              >
+                {order.status}
+              </span>
+            </div>
+            <div className="text-muted">
+              {order.createdAt
+                ? new Date(order.createdAt).toLocaleDateString()
+                : "Date N/A"}
+            </div>
+          </Card.Header>
 
-        <Card.Body>
-          {Array.isArray(order.orderItems) && order.orderItems.length > 0 ? (
-            order.orderItems.map((item, i) => (
-              <Card key={i} className="mb-3 shadow-sm">
-                <Card.Body>
-                  <Card.Title>{item.name}</Card.Title>
-                  <Card.Text>
-                    Quantity: {item.quantity} <br />
-                    Price: ₹{item.price} <br />
-                    Subtotal: ₹{item.price * item.quantity}
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            ))
-          ) : (
-            <p className="text-muted">No items in this order.</p>
-          )}
+          <Card.Body>
+            {Array.isArray(order.orderItems) && order.orderItems.length > 0 ? (
+              order.orderItems.map((item, i) => (
+                <Card key={i} className="mb-3 shadow-sm">
+                  <Card.Body>
+                    <div className="d-flex align-items-center">
+                      {item.imageUrl && (
+                        <img
+                          src={item.imageUrl}
+                          alt={item.name}
+                          style={{
+                            width: "80px",
+                            height: "80px",
+                            objectFit: "cover",
+                            marginRight: "15px",
+                            borderRadius: "8px",
+                          }}
+                        />
+                      )}
+                      <div>
+                        <Card.Title>{item.name}</Card.Title>
+                        <Card.Text className="mb-0">
+                          Quantity: {item.quantity} <br />
+                          Price: ₹{item.price} <br />
+                          Subtotal: ₹{item.price * item.quantity}
+                        </Card.Text>
+                      </div>
+                    </div>
+                  </Card.Body>
+                </Card>
+              ))
+            ) : (
+              <p className="text-muted">No items in this order.</p>
+            )}
 
-          <div className="text-end fw-bold mt-2">
-            Total: ₹{order.totalPrice || "N/A"}
-          </div>
-        </Card.Body>
-      </Card>
-    ))}
-  </>
-);
+            <div className="text-end fw-bold mt-2">
+              Total: ₹{order.totalPrice || "N/A"}
+            </div>
+          </Card.Body>
+        </Card>
+      ))}
+    </>
+  );
 
   if (loading) {
     return (
