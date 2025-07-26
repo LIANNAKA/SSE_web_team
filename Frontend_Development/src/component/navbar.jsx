@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { NavDropdown } from "react-bootstrap";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes} from "react-icons/fa";
 import UserProfileDropDown from "../component/UserProfileDropDownMenu";
 
 const Navbar = ({ setShowLoginModal }) => {
@@ -194,7 +194,7 @@ const Navbar = ({ setShowLoginModal }) => {
                 className="btn nav-link px-4 bg-transparent border-0"
                 onClick={() => setShowLoginModal(true)}
               >
-                Login/SignUp
+                Login
               </button>
             )}
           </li>
