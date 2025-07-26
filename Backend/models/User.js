@@ -12,6 +12,10 @@ const userSchema = new mongoose.Schema(
     companyAddress: { type: String, default: "" },
     resetToken: { type: String },
     resetTokenExpiry: { type: Date },
+    wishlist: {
+      type: [String],
+      default: [],
+    },
   },
   { timestamps: true }
 );

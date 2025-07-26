@@ -11,6 +11,9 @@ import {
   resetPassword,
   updateAddressAndCompany,
   getOwnProfile,
+  toggleWishlist,
+  getWishlist,
+  removeFromWishlist,
 } from "../controllers/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -30,5 +33,8 @@ router.post("/register", registerUser); // user self-registers
 router.get("/register", registerUser); // user self-registers
 router.post("/forgot", forgotPassword);
 router.post("/reset/:token", resetPassword);
+router.get('/wishlist', protect, getWishlist);
+router.post('/wishlist', protect, toggleWishlist);
+router.delete('/wishlist/:productId', protect, removeFromWishlist);
 
 export default router;
