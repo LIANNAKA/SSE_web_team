@@ -26,7 +26,7 @@ const MyOrders = () => {
       })
       .then((res) => {
         const allOrders = res.data;
-console.log("📦 Raw orders from backend:", allOrders);
+        console.log("📦 Raw orders from backend:", allOrders);
         // Filter into current and past based on status
         const current = allOrders.filter((order) =>
           ["pending", "processing", "shipped"].includes(
@@ -34,15 +34,15 @@ console.log("📦 Raw orders from backend:", allOrders);
           )
         );
         allOrders.forEach((order, i) =>
-  console.log(`Order ${i + 1} status:`, order.status)
-);
+          console.log(`Order ${i + 1} status:`, order.status)
+        );
 
-console.log("🟢 Current Orders after filtering:", current);
+        console.log("🟢 Current Orders after filtering:", current);
 
         const past = allOrders.filter((order) =>
           ["delivered", "cancelled"].includes(order.status?.toLowerCase())
         );
-console.log("🔴 Past Orders after filtering:", past);
+        console.log("🔴 Past Orders after filtering:", past);
         setCurrentOrders(current);
         setPastOrders(past);
         setLoading(false);
@@ -54,55 +54,59 @@ console.log("🔴 Past Orders after filtering:", past);
       });
   }, []);
 
-  const renderOrderCards = (orders) => (
-    <>
-      {orders.map((order, index) => (
-        <Card key={index} className="mb-4 shadow-sm">
-          <Card.Header className="d-flex justify-content-between align-items-center">
-            <div>
-              <b>Order ID:</b> {order.orderId || "N/A"} <br />
-              <b>Status:</b>{" "}
-              <span
-                className={`text-capitalize fw-semibold ${
-                  order.status === "cancelled"
-                    ? "text-danger"
-                    : order.status === "delivered"
-                    ? "text-success"
-                    : "text-primary"
-                }`}
-              >
-                {order.status}
-              </span>
-            </div>
-            <div className="text-muted">
-              {new Date(order.orderedAt).toLocaleDateString()}
-            </div>
-          </Card.Header>
+ const renderOrderCards = (orders) => (
+  <>
+    {orders.map((order, index) => (
+      <Card key={index} className="mb-4 shadow-sm">
+        <Card.Header className="d-flex justify-content-between align-items-center">
+          <div>
+            <b>Order ID:</b> {order._id || "N/A"} <br />
+            <b>Status:</b>{" "}
+            <span
+              className={`text-capitalize fw-semibold ${
+                order.status === "cancelled"
+                  ? "text-danger"
+                  : order.status === "delivered"
+                  ? "text-success"
+                  : "text-primary"
+              }`}
+            >
+              {order.status}
+            </span>
+          </div>
+          <div className="text-muted">
+            {order.createdAt
+              ? new Date(order.createdAt).toLocaleDateString()
+              : "Date N/A"}
+          </div>
+        </Card.Header>
 
-          <Card.Body>
-            {Array.isArray(order.items) && order.items.length > 0 ? (
-              order.items.map((item, i) => (
-                <Card key={i} className="mb-3 shadow-sm">
-                  <Card.Body>
-                    <Card.Title>{item.name}</Card.Title>
-                    <Card.Text>
-                      Quantity: {item.quantity} <br />
-                      Price: ₹{item.price} <br />
-                      Subtotal: ₹{item.price * item.quantity}
-                    </Card.Text>
-                  </Card.Body>
-                </Card>
-              ))
-            ) : (
-              <p className="text-muted">No items in this order.</p>
-            )}
+        <Card.Body>
+          {Array.isArray(order.orderItems) && order.orderItems.length > 0 ? (
+            order.orderItems.map((item, i) => (
+              <Card key={i} className="mb-3 shadow-sm">
+                <Card.Body>
+                  <Card.Title>{item.name}</Card.Title>
+                  <Card.Text>
+                    Quantity: {item.quantity} <br />
+                    Price: ₹{item.price} <br />
+                    Subtotal: ₹{item.price * item.quantity}
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            ))
+          ) : (
+            <p className="text-muted">No items in this order.</p>
+          )}
 
-            <div className="text-end fw-bold mt-2">Total: ₹{order.total}</div>
-          </Card.Body>
-        </Card>
-      ))}
-    </>
-  );
+          <div className="text-end fw-bold mt-2">
+            Total: ₹{order.totalPrice || "N/A"}
+          </div>
+        </Card.Body>
+      </Card>
+    ))}
+  </>
+);
 
   if (loading) {
     return (
