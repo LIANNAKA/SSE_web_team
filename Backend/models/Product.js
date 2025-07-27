@@ -9,28 +9,7 @@ const productSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: [
-  'Adhesives',
-  'Calculator',
-  'Disposable Items',
-  'Envelope',
-  'Eraser',
-  'File/Folder',
-  'Highlighter',
-  'Marker',
-  'Miscellaneous',
-  'Paper',
-  'Pen',
-  'Pencil',
-  'Printer',
-  'Register',
-  'Tools',
-  'Air Fresheners',
-  'Mops & Wipers',
-  'Pest Control',
-  'Stationary',
-  'Cleaning'
-]
+    enum: ['Stationary','Housekeeping']
   },
   stock: { type: Number, default: 0 },
   imageUrl: String,
