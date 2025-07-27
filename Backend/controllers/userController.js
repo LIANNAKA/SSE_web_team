@@ -192,7 +192,7 @@ export const resetPassword = async (req, res) => {
 
 export const getUsers = async (req, res) => {
   try {
-    const users = await User.find({}, 'userId name email mobile createdAt');
+    const users = await User.find({}, 'userId name email mobile address company companyAddress createdAt');
     res.json(users);
   } catch (err) {
     res.status(500).json({ error: 'Error fetching users' });
