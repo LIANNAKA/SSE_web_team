@@ -85,9 +85,9 @@ const Cart = () => {
                   <div className="col-md-9">
                     <div className="card-body">
                       <h5 className="card-title">{item.name}</h5>
-                      <p className="card-text" style={{ minHeight: "2em" }}>
+                      {/* <p className="card-text" style={{ minHeight: "2em" }}>
                         {item.description || "No description available."}
-                      </p>
+                      </p> */}
                       <p className="card-text mb-1">Price: ₹{item.price}</p>
 
                       {/* Quantity Controls */}

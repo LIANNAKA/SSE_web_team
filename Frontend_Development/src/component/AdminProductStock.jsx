@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
+import {InputGroup} from "react-bootstrap";
+import { FaSearch } from "react-icons/fa";
 
 const AdminProductStock = () => {
   const [products, setProducts] = useState([]);
@@ -49,13 +51,19 @@ const AdminProductStock = () => {
     <div className="container my-4">
       <h2 className="mb-4">Product Stock Management</h2>
 
+{/* 🔍 Search Bar */}
+      <InputGroup className="mb-3">
       <input
         type="text"
-        className="form-control mb-3"
+        className="form-control"
         placeholder="Search by product name or category"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-      />
+        />
+         <InputGroup.Text className="bg-primary text-white">
+                  <FaSearch />
+                </InputGroup.Text>
+        </InputGroup>
 
       {filteredProducts.length === 0 ? (
         <p>No products found.</p>
