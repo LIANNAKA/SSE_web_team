@@ -51,7 +51,7 @@ const handleLogin = async () => {
 
   return (
     <div className="container d-flex flex-column align-items-center justify-content-center m-md-4">
-      <h2 className="mb-4 text-primary">Shri Syam Enterprises</h2>
+      <h2 className="mb-4 text-primary">Shree Shyam Enterprises</h2>
 
       <div className="card p-4 shadow" style={{ maxWidth: "400px", width: "100%" }}>
         <h4 className="mb-3 text-center">Admin Login</h4>
