@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Table, Spinner, Alert,Form } from "react-bootstrap";
+import { Table, Spinner, Alert,Form, InputGroup } from "react-bootstrap";
+import { FaSearch } from "react-icons/fa";
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -36,13 +37,17 @@ const UserList = () => {
       <h2 className="mb-4">User List</h2>
 
       {/* 🔍 Search Bar */}
+      <InputGroup className="mb-3">
       <Form.Control
         type="text"
         placeholder="Search by Name or ID"
-        className="mb-3"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-      />
+        />
+         <InputGroup.Text className="bg-primary text-white">
+          <FaSearch />
+        </InputGroup.Text>
+        </InputGroup>
 
       {loading && <Spinner animation="border" variant="primary" />}
 
