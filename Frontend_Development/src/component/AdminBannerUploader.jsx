@@ -28,21 +28,34 @@ const AdminBannerUploader = () => {
 
     const formData = new FormData();
     formData.append("images", image);
-     formData.append("titles", JSON.stringify([title]));
+    formData.append("titles", JSON.stringify([title]));
 
     try {
-    await axios.post("http://localhost:5000/api/banner/multi", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    setTitle("");
-    setImage(null);
-    fetchBanners();
-    alert("Banner uploaded successfully");
-  } catch (err) {
-    console.error("Error uploading banner:", err);
-    alert("Failed to upload banner");
-  }
-};
+      await axios.post("http://localhost:5000/api/banner/multi", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      setTitle("");
+      setImage(null);
+      fetchBanners();
+      alert("Banner uploaded successfully");
+    } catch (err) {
+      console.error("Error uploading banner:", err);
+      alert("Failed to upload banner");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this banner?")) return;
+
+    try {
+      await axios.delete(`http://localhost:5000/api/banner/${id}`);
+      fetchBanners(); // Refresh list
+      alert("Banner deleted successfully");
+    } catch (err) {
+      console.error("Error deleting banner:", err);
+      alert("Failed to delete banner");
+    }
+  };
 
   return (
     <div className="container mt-4">
@@ -83,8 +96,14 @@ const AdminBannerUploader = () => {
                 alt={banner.title}
                 style={{ height: "200px", objectFit: "cover" }}
               />
-              <div className="card-body">
-                <h5 className="card-title">{banner.title}</h5>
+              <div className="card-body d-flex justify-content-between align-items-center">
+                <h5 className="card-title mb-0">{banner.title}</h5>
+                <button
+                  className="btn btn-sm btn-danger"
+                  onClick={() => handleDelete(banner._id)}
+                >
+                  Delete
+                </button>
               </div>
             </div>
           </div>
