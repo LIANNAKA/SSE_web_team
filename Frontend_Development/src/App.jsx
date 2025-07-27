@@ -34,6 +34,8 @@ import ProductCard from "./component/ProductCard";
 import AllProduct from "./component/ProductDropdownKey/AllProduct";
 import StationaryProduct from "./component/ProductDropdownKey/StationaryProduct";
 import CleaningProduct from "./component/ProductDropdownKey/CleaningProduct";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const userRole = localStorage.getItem("userRole") || "guest";
@@ -102,6 +104,7 @@ function App() {
             }
           />
         </Routes>
+         <ToastContainer position="top-right" autoClose={3000} />
       </main>
       <Footer />
       {showLoginModal && <LoginModal setShowLoginModal={setShowLoginModal} />}
