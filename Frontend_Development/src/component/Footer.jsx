@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="bg-dark text-white pt-4 pb-0">
+    <footer className="bg-dark text-white pt-4 pb-0 mt-5">
       <div className="container text-md-left">
         <div className="row">
           {/* Company Section */}

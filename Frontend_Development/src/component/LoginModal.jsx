@@ -43,7 +43,7 @@ function LoginModal({ setShowLoginModal }) {
     });
 
     try {
-      const { data } = await axiosInstance.post("/api/users/register", {
+      const { data } = await axiosInstance.post("/users/register", {
         name: signupName,
         mobile: signupMobile,
         email: signupEmail,

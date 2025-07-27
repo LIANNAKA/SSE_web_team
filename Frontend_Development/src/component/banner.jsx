@@ -21,7 +21,7 @@ useEffect(() => {
   }
 
   return (
-    <div id="carouselExampleIndicators" className="carousel slide" data-bs-ride="carousel" data-bs-interval="3000" data-bs-wrap="true" data-bs-pause="false">
+    <div id="carouselExampleIndicators" className="carousel slide mb-5" data-bs-ride="carousel" data-bs-interval="3000" data-bs-wrap="true" data-bs-pause="false">
       {banners.length > 0 && (
         <div className="carousel-indicators">
           {banners.map((_, index) => (
