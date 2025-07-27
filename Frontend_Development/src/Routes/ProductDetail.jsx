@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate  } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 
 const ProductDetail = () => {
@@ -25,14 +25,25 @@ const ProductDetail = () => {
     }
   }, [productId]);
 
-  const handleBuy = () => {
-    if (product)
-      setMessage(
-        `Thank you for buying ${quantity} unit${quantity > 1 ? "s" : ""} of ${
-          product.name
-        }!`
-      );
-  };
+  const navigate = useNavigate();
+const handleBuy = async () => {
+  if (!product) return;
+
+  try {
+    await axiosInstance.post("/cart", {
+      productId: product.productId,
+      name: product.name,
+      price: product.price,
+      image: product.imageUrl,
+      quantity,
+    });
+
+    navigate("/cart"); // ✅ Redirect to cart after adding
+  } catch (err) {
+    console.error("Error adding to cart:", err);
+    setError("Failed to add to cart. Please try again.");
+  }
+};
 
   const incrementQuantity = () => {
     if (product) setQuantity((prev) => Math.min(prev + 1, product.stock));
