@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
-import {InputGroup} from "react-bootstrap";
+import { InputGroup } from "react-bootstrap";
 import { FaSearch } from "react-icons/fa";
 
 const AdminProductStock = () => {
   const [products, setProducts] = useState([]);
   const [stockInputs, setStockInputs] = useState({});
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchProducts();
@@ -21,7 +21,6 @@ const AdminProductStock = () => {
     }
   };
 
-  
   const handleStockChange = (id, value) => {
     setStockInputs({ ...stockInputs, [id]: value });
   };
@@ -33,47 +32,44 @@ const AdminProductStock = () => {
     return;
   }
 
-  const token = localStorage.getItem('adminToken'); 
+    try {
+      const currentProduct = products.find((p) => p.productId === id);
+      const newStock = currentProduct.stock + updatedStock;
 
-  try {
-    await axiosInstance.put(
-      `/admin/update-stock/${id}`,
-      { stock: updatedStock },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    );
-    fetchProducts();
-  } catch (err) {
-    console.error("Error updating stock:", err);
-  }
-};
+      await axiosInstance.put(`/products/update-by-productid/${id}`, {
+        stock: newStock,
+      });
 
+      fetchProducts(); // Refresh updated data
+    } catch (err) {
+      console.error("Error updating stock:", err);
+    }
+  };
 
-  const filteredProducts = products.filter((prod) =>
-    prod.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (prod.category && prod.category.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredProducts = products.filter(
+    (prod) =>
+      prod.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (prod.category &&
+        prod.category.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
     <div className="container my-4">
       <h2 className="mb-4">Product Stock Management</h2>
 
-{/* 🔍 Search Bar */}
+      {/* 🔍 Search Bar */}
       <InputGroup className="mb-3">
-      <input
-        type="text"
-        className="form-control"
-        placeholder="Search by product name or category"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Search by product name or category"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
-         <InputGroup.Text className="bg-primary text-white">
-                  <FaSearch />
-                </InputGroup.Text>
-        </InputGroup>
+        <InputGroup.Text className="bg-primary text-white">
+          <FaSearch />
+        </InputGroup.Text>
+      </InputGroup>
 
       {filteredProducts.length === 0 ? (
         <p>No products found.</p>
@@ -91,26 +87,27 @@ const AdminProductStock = () => {
             <tbody>
               {filteredProducts.map((prod) => (
                 <tr key={prod.productId}>
-                <td>{prod.name}</td>
-                <td>{prod.category || "N/A"}</td>
-                <td>{prod.stock}</td>
-                <td>
-                  <input
-                    type="number"
-                    className="form-control mb-1"
-                    value={stockInputs[prod.productId] || ""}
-                    onChange={(e) => handleStockChange(prod.productId, e.target.value)}
-                    placeholder="New quantity"
-                  />
-                  <button
-                    className="btn btn-sm btn-primary"
-                    onClick={() => handleUpdateStock(prod.productId)}
-                  >
-                    Update
-                  </button>
-                </td>
-              </tr>
-
+                  <td>{prod.name}</td>
+                  <td>{prod.category || "N/A"}</td>
+                  <td>{prod.stock}</td>
+                  <td>
+                    <input
+                      type="number"
+                      className="form-control mb-1"
+                      value={stockInputs[prod.productId] || ""}
+                      onChange={(e) =>
+                        handleStockChange(prod.productId, e.target.value)
+                      }
+                      placeholder="New quantity"
+                    />
+                    <button
+                      className="btn btn-sm btn-primary"
+                      onClick={() => handleUpdateStock(prod.productId)}
+                    >
+                      Update
+                    </button>
+                  </td>
+                </tr>
               ))}
             </tbody>
           </table>
