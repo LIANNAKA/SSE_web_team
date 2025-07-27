@@ -9,6 +9,8 @@ import {
   InputGroup,
 } from "react-bootstrap";
 import { FaSearch } from "react-icons/fa";
+import ConfirmDialog from "./ConfirmDialog";
+import StatusMessage from "./StatusMessage";
 
 const DeleteUser = () => {
   const [users, setUsers] = useState([]);
@@ -17,11 +19,13 @@ const DeleteUser = () => {
   const [msg, setMsg] = useState({ type: "", text: "" });
   const [searchTerm, setSearchTerm] = useState("");
 
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+
   const token = localStorage.getItem("adminToken");
 
   useEffect(() => {
     fetchUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchUsers = () => {
@@ -41,8 +45,6 @@ const DeleteUser = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
-
     try {
       await axios.delete(`http://localhost:5000/api/admin/delete-user/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -52,9 +54,10 @@ const DeleteUser = () => {
     } catch {
       setMsg({ type: "danger", text: "Failed to delete user" });
     }
+    setShowConfirm(false);
+    setSelectedUserId(null);
   };
 
-  // 🔍 Filter users when searchTerm changes
   useEffect(() => {
     const term = searchTerm.toLowerCase();
     const filtered = users.filter(
@@ -83,8 +86,14 @@ const DeleteUser = () => {
         </InputGroup.Text>
       </InputGroup>
 
-      {/* ✅ Message Alert */}
-      {msg.text && <Alert variant={msg.type}>{msg.text}</Alert>}
+      {/* ✅ Status Message */}
+      {msg.text && (
+        <StatusMessage
+          type={msg.type}
+          message={msg.text}
+          onClose={() => setMsg({ type: "", text: "" })}
+        />
+      )}
 
       {loading ? (
         <Spinner animation="border" />
@@ -114,7 +123,10 @@ const DeleteUser = () => {
                   <Button
                     variant="danger"
                     size="sm"
-                    onClick={() => handleDelete(u._id)}
+                    onClick={() => {
+                      setSelectedUserId(u._id);
+                      setShowConfirm(true);
+                    }}
                   >
                     Delete
                   </Button>
@@ -124,6 +136,15 @@ const DeleteUser = () => {
           </tbody>
         </Table>
       )}
+
+      {/* ✅ Confirmation Dialog */}
+      <ConfirmDialog
+        show={showConfirm}
+        onHide={() => setShowConfirm(false)}
+        onConfirm={() => handleDelete(selectedUserId)}
+        title="Delete Confirmation"
+        message="Are you sure you want to delete this user?"
+      />
     </div>
   );
 };

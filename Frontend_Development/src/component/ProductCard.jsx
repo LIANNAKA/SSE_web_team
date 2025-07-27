@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "../axiosInstance";
 import { Card, Row, Col, Spinner, Alert, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import PurchaseMessage from "./PurchaseMessage";
 import axios from "axios";
 
 const ProductCard = ({ category = "all" }) => {
@@ -10,6 +11,7 @@ const ProductCard = ({ category = "all" }) => {
   const [error, setError] = useState("");
   const [quantities, setQuantities] = useState({});
   const [wishlist, setWishlist] = useState([]);
+  const [messageData, setMessageData] = useState(null);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -33,9 +35,12 @@ const ProductCard = ({ category = "all" }) => {
 
     const fetchWishlist = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/users/wishlist", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          "http://localhost:5000/api/users/wishlist",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         const ids = res.data.map((item) => item.productId);
         setWishlist(ids);
       } catch (err) {
@@ -60,14 +65,22 @@ const ProductCard = ({ category = "all" }) => {
 
   const handleBuy = async (product) => {
     const quantity = quantities[product.productId];
+
+    // Add to local cart state or UI handler
     handleAddToCart(product, quantity);
 
     try {
+      // Send data to backend
       await axiosInstance.post("/cart", {
         productId: product.productId,
         quantity,
       });
-      alert("Purchase Successful");
+
+      // ✅ Show component-based success message
+      setMessageData({
+        type: "success",
+        message: `Purchase successful for ${product.name}`,
+      });
     } catch (err) {
       console.error("Purchase failed", err);
       alert("Purchase Failed");
@@ -77,9 +90,12 @@ const ProductCard = ({ category = "all" }) => {
   const handleWishlistClick = async (productId) => {
     try {
       if (wishlist.includes(productId)) {
-        await axios.delete(`http://localhost:5000/api/users/wishlist/${productId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await axios.delete(
+          `http://localhost:5000/api/users/wishlist/${productId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setWishlist((prev) => prev.filter((id) => id !== productId));
       } else {
         await axios.post(
@@ -100,6 +116,13 @@ const ProductCard = ({ category = "all" }) => {
   return (
     <div className="px-3">
       {loading && <Spinner animation="border" />}
+      {messageData && (
+        <PurchaseMessage
+          type={messageData.type}
+          message={messageData.message}
+          onClose={() => setMessageData(null)}
+        />
+      )}
 
       {error && <Alert variant="danger">{error}</Alert>}
 
@@ -107,13 +130,7 @@ const ProductCard = ({ category = "all" }) => {
         <Alert variant="info">No products found.</Alert>
       )}
 
-      <Row
-        xs={2}
-        sm={3}
-        md={4}
-        lg={5}
-        className="gy-3 gx-3 gx-sm-3 gx-md-4"
-      >
+      <Row xs={2} sm={3} md={4} lg={5} className="gy-3 gx-3 gx-sm-3 gx-md-4">
         {products
           .filter((prod) => category === "all" || prod.category === category)
           .map((prod) => (
@@ -187,9 +204,7 @@ const ProductCard = ({ category = "all" }) => {
                     <Button
                       variant="outline-secondary"
                       size="sm"
-                      onClick={() =>
-                        handleQuantityChange(prod.productId, -1)
-                      }
+                      onClick={() => handleQuantityChange(prod.productId, -1)}
                     >
                       -
                     </Button>
@@ -197,9 +212,7 @@ const ProductCard = ({ category = "all" }) => {
                     <Button
                       variant="outline-secondary"
                       size="sm"
-                      onClick={() =>
-                        handleQuantityChange(prod.productId, 1)
-                      }
+                      onClick={() => handleQuantityChange(prod.productId, 1)}
                     >
                       +
                     </Button>
