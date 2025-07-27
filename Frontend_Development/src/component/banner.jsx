@@ -11,7 +11,6 @@ useEffect(() => {
     .catch((err) => console.error("Failed to load banners", err));
 }, []);
 
-
   if (banners.length === 0) {
     return ( 
       <div className="carousel-item active">
