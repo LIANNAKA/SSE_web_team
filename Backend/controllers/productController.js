@@ -1,17 +1,26 @@
-import Product from '../models/Product.js';
-import { logToFile } from '../utils/logger.js';
+import Product from "../models/Product.js";
+import { logToFile } from "../utils/logger.js";
 
 // Auto-generate productId based on name
 const generateProductId = (name) => {
-  const trimmed = name.replace(/\s+/g, '').toLowerCase();
+  const trimmed = name.replace(/\s+/g, "").toLowerCase();
   const randomNum = Math.floor(1000 + Math.random() * 9000);
   return `${trimmed}${randomNum}`;
-}
+};
 
 // Create/Add a new product
 export const createProduct = async (req, res) => {
   try {
-    const { name, description, company, price, stock, category } = req.body;
+    const { name, description, company, price, stock, category, displayLocations } = req.body;
+
+    let parsedDisplayLocations = [];
+    if (displayLocations) {
+      try {
+        parsedDisplayLocations = JSON.parse(displayLocations);
+      } catch (error) {
+        console.warn('Invalid displayLocations:', displayLocations);
+      }
+    }
 
     if (!name || !price || !category || !req.file) {
       return res.status(400).json({ error: 'Missing required fields' });
@@ -36,6 +45,7 @@ export const createProduct = async (req, res) => {
       stock: stock ? numericStock : 0,
       category,
       imageUrl,
+      displayLocations: parsedDisplayLocations
     });
 
     await product.save();
@@ -54,13 +64,15 @@ export const createProduct = async (req, res) => {
 // Read all the list of product
 export const getProducts = async (req, res) => {
   try {
-    console.log('Inside getProducts Controller');
+    console.log("Inside getProducts Controller");
     const products = await Product.find();
-    console.log('Products fetched:', products.length);
+    console.log("Products fetched:", products.length);
     res.json(products);
   } catch (err) {
-    console.error('Error fetching products:', err);
-    res.status(500).json({ error: 'Error fetching products', details: err.message });
+    console.error("Error fetching products:", err);
+    res
+      .status(500)
+      .json({ error: "Error fetching products", details: err.message });
   }
 };
 
@@ -68,10 +80,10 @@ export const getProducts = async (req, res) => {
 export const getProductById = async (req, res) => {
   try {
     const product = await Product.findOne({ productId: req.params.productId });
-    if (!product) return res.status(404).json({ error: 'Product not found' });
+    if (!product) return res.status(404).json({ error: "Product not found" });
     res.json(product);
   } catch (err) {
-    res.status(500).json({ error: 'Error fetching product' });
+    res.status(500).json({ error: "Error fetching product" });
   }
 };
 
@@ -79,11 +91,28 @@ export const getProductById = async (req, res) => {
 export const updateProductByProductId = async (req, res) => {
   try {
     const { productId } = req.params;
-    const { name, description, price, category, stock, imageUrl } = req.body;
+    const { name, description, price, category, stock, imageUrl, displayLocations } = req.body;
+
+    let parsedDisplayLocations = [];
+    if (displayLocations) {
+      try {
+        parsedDisplayLocations = JSON.parse(displayLocations);
+      } catch (err) {
+        console.warn('Invalid displayLocations in update:', displayLocations);
+      }
+    }
 
     const updated = await Product.findOneAndUpdate(
       { productId },
-      { name, description, price, category, stock, imageUrl },
+      {
+        name,
+        description,
+        price,
+        category,
+        stock,
+        imageUrl,
+        displayLocations: parsedDisplayLocations
+      },
       { new: true }
     );
 
@@ -95,25 +124,30 @@ export const updateProductByProductId = async (req, res) => {
   }
 };
 
+
 //Delete
 export const deleteProductByProductId = async (req, res) => {
   try {
-    const product = await Product.findOneAndDelete({ productId: req.params.productId });
+    const product = await Product.findOneAndDelete({
+      productId: req.params.productId,
+    });
     if (!product) {
-      return res.status(404).json({ error: 'Product not found' });
+      return res.status(404).json({ error: "Product not found" });
     }
-    res.json({ message: 'Product deleted successfully', product });
+    res.json({ message: "Product deleted successfully", product });
   } catch (err) {
-    res.status(500).json({ error: 'Error deleting product', details: err.message });
+    res
+      .status(500)
+      .json({ error: "Error deleting product", details: err.message });
   }
 };
 
 export const getProductStockStats = async (req, res) => {
   try {
-    const products = await Product.find().select('name stock unitsSold');
+    const products = await Product.find().select("name stock unitsSold");
     res.json(products);
   } catch (err) {
-    res.status(500).json({ error: 'Error fetching product stock stats' });
+    res.status(500).json({ error: "Error fetching product stock stats" });
   }
 };
 
@@ -121,46 +155,50 @@ export const buyProduct = async (req, res) => {
   try {
     const { productId } = req.params;
     const { quantity } = req.body;
-    if (!quantity || quantity <= 0) 
-    return res.status(400).json({ error: 'Invalid quantity' });
-  
-    const product = await Product.findOne({productId});
+    if (!quantity || quantity <= 0)
+      return res.status(400).json({ error: "Invalid quantity" });
 
-    if (!product) return res.status(404).json({ error: 'Product not found' });
-    
+    const product = await Product.findOne({ productId });
 
-    if (product.stock < quantity) return res.status(400).json({ error: 'Insufficient stock' });
+    if (!product) return res.status(404).json({ error: "Product not found" });
+
+    if (product.stock < quantity)
+      return res.status(400).json({ error: "Insufficient stock" });
 
     product.stock -= quantity;
     product.unitsSold += quantity;
 
     await product.save();
 
-    logToFile(`Product purchased: ${product.name} | Qty: ${quantity} | Remaining stock: ${product.stock} | Total sold: ${product.unitsSold}`);
-    
-    res.json({ message: 'Purchase successful', product });
+    logToFile(
+      `Product purchased: ${product.name} | Qty: ${quantity} | Remaining stock: ${product.stock} | Total sold: ${product.unitsSold}`
+    );
+
+    res.json({ message: "Purchase successful", product });
   } catch (err) {
-    res.status(500).json({ error: 'Purchase failed', details: err.message });
+    res.status(500).json({ error: "Purchase failed", details: err.message });
   }
 };
 
 export const restockProduct = async (req, res) => {
   try {
-    const { productId} = req.params;
+    const { productId } = req.params;
     const { quantity } = req.body;
 
-    const product = await Product.findOne({productId});
-    if (!product) return res.status(404).json({ error: 'Product not found' });
+    const product = await Product.findOne({ productId });
+    if (!product) return res.status(404).json({ error: "Product not found" });
 
-    product.stock += quantity;       
+    product.stock += quantity;
 
     await product.save();
 
-    logToFile(`Product restocked: ${product.name} | Added: ${quantity} | New stock: ${product.stock}`);
+    logToFile(
+      `Product restocked: ${product.name} | Added: ${quantity} | New stock: ${product.stock}`
+    );
 
-    res.json({ message: 'Product restocked', product });
+    res.json({ message: "Product restocked", product });
   } catch (err) {
-    res.status(500).json({ error: 'Restock failed', details: err.message });
+    res.status(500).json({ error: "Restock failed", details: err.message });
   }
 };
 
@@ -170,15 +208,18 @@ export const getProductsByCategory = async (req, res) => {
 
     const products = await Product.find({ category: cat });
     if (products.length === 0) {
-      return res.status(404).json({ message: `No products found in ${cat} category` });
+      return res
+        .status(404)
+        .json({ message: `No products found in ${cat} category` });
     }
 
     res.json(products);
   } catch (err) {
-    res.status(500).json({ error: 'Error fetching category', details: err.message });
+    res
+      .status(500)
+      .json({ error: "Error fetching category", details: err.message });
   }
 };
-
 
 export const searchProducts = async (req, res) => {
   try {
@@ -193,7 +234,7 @@ export const searchProducts = async (req, res) => {
         { name: { $regex: query, $options: "i" } },
         { description: { $regex: query, $options: "i" } },
         { productId: { $regex: query, $options: "i" } },
-      ]
+      ],
     });
 
     res.json(results);
@@ -202,6 +243,3 @@ export const searchProducts = async (req, res) => {
     res.status(500).json({ error: "Search failed", details: err.message });
   }
 };
-
-
-

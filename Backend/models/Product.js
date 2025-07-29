@@ -14,7 +14,10 @@ const productSchema = new mongoose.Schema({
   stock: { type: Number, default: 0 },
   imageUrl: String,
   unitsSold: { type: Number, default: 0 },
-
+  displayLocations: {
+  type: [String],
+  default: []
+}
 }, { timestamps: true });
 // to remove mongoDb _id
 productSchema.set('toJSON', {

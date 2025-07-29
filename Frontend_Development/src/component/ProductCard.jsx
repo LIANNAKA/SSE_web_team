@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../axiosInstance";
 import { Card, Row, Col, Spinner, Alert, Button } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import PurchaseMessage from "./PurchaseMessage";
-import axios from "axios";
 
 const ProductCard = ({ category = "all" }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [quantities, setQuantities] = useState({});
-  const [wishlist, setWishlist] = useState([]);
   const [messageData, setMessageData] = useState(null);
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -33,24 +29,8 @@ const ProductCard = ({ category = "all" }) => {
       }
     };
 
-    const fetchWishlist = async () => {
-      try {
-        const res = await axios.get(
-          "http://localhost:5000/api/users/wishlist",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        const ids = res.data.map((item) => item.productId);
-        setWishlist(ids);
-      } catch (err) {
-        console.error("Error fetching wishlist:", err);
-      }
-    };
-
     fetchProducts();
-    fetchWishlist();
-  }, [token]);
+  }, []);
 
   const handleQuantityChange = (id, delta) => {
     setQuantities((prev) => ({
@@ -66,17 +46,14 @@ const ProductCard = ({ category = "all" }) => {
   const handleBuy = async (product) => {
     const quantity = quantities[product.productId];
 
-    // Add to local cart state or UI handler
     handleAddToCart(product, quantity);
 
     try {
-      // Send data to backend
       await axiosInstance.post("/cart", {
         productId: product.productId,
         quantity,
       });
 
-      // ✅ Show component-based success message
       setMessageData({
         type: "success",
         message: `Purchase successful for ${product.name}`,
@@ -84,32 +61,6 @@ const ProductCard = ({ category = "all" }) => {
     } catch (err) {
       console.error("Purchase failed", err);
       alert("Purchase Failed");
-    }
-  };
-
-  const handleWishlistClick = async (productId) => {
-    try {
-      if (wishlist.includes(productId)) {
-        await axios.delete(
-          `http://localhost:5000/api/users/wishlist/${productId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setWishlist((prev) => prev.filter((id) => id !== productId));
-      } else {
-        await axios.post(
-          `http://localhost:5000/api/users/wishlist`,
-          { productId },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        setWishlist((prev) => [...prev, productId]);
-        navigate("/wishlist");
-      }
-    } catch (err) {
-      console.error("Wishlist action failed:", err);
     }
   };
 
@@ -123,9 +74,7 @@ const ProductCard = ({ category = "all" }) => {
           onClose={() => setMessageData(null)}
         />
       )}
-
       {error && <Alert variant="danger">{error}</Alert>}
-
       {!loading && products.length === 0 && (
         <Alert variant="info">No products found.</Alert>
       )}
@@ -136,7 +85,7 @@ const ProductCard = ({ category = "all" }) => {
           .map((prod) => (
             <Col key={prod.productId}>
               <Card
-                className="h-100 shadow-sm position-relative"
+                className="h-100 shadow-sm"
                 style={{ width: "100%", maxWidth: "250px", margin: "0 auto" }}
               >
                 <Card.Img
@@ -148,38 +97,6 @@ const ProductCard = ({ category = "all" }) => {
                     e.target.src = "/default-product.png";
                   }}
                 />
-
-                <button
-                  className="btn btn-light position-absolute"
-                  onClick={() => handleWishlistClick(prod.productId)}
-                  style={{
-                    top: "10px",
-                    right: "10px",
-                    zIndex: 2,
-                    borderRadius: "50%",
-                    padding: "0.4rem 0.5rem",
-                    fontSize: "1.3rem",
-                    boxShadow: "0 0 5px #ccc",
-                    border: "none",
-                  }}
-                  title={
-                    wishlist.includes(prod.productId)
-                      ? "Remove from wishlist"
-                      : "Add to wishlist"
-                  }
-                >
-                  <i
-                    className={
-                      wishlist.includes(prod.productId)
-                        ? "bi bi-heart-fill"
-                        : "bi bi-heart"
-                    }
-                    style={{
-                      color: "#e74c3c",
-                      fontSize: "1.3rem",
-                    }}
-                  ></i>
-                </button>
 
                 <Card.Body className="p-2 d-flex flex-column justify-content-between">
                   <div>

@@ -12,6 +12,7 @@ const AdminProductUpdate = ({ isUpdate = false, existingData = {} }) => {
   const [stock, setStock] = useState(existingData.stock || "");
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
+  const [displayLocations, setDisplayLocations] = useState(existingData.displayLocations || []);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -28,6 +29,7 @@ const AdminProductUpdate = ({ isUpdate = false, existingData = {} }) => {
     formData.append("category", category);
     formData.append("price", price);
     formData.append("stock", stock);
+    formData.append("displayLocations", JSON.stringify(displayLocations));
     if (image) {
         formData.append("image", image);
     }
@@ -42,6 +44,15 @@ const AdminProductUpdate = ({ isUpdate = false, existingData = {} }) => {
     alert("Failed to add product");
   }
   };
+
+  const handleDisplayChange = (e) => {
+  const value = e.target.value;
+  setDisplayLocations((prev) =>
+    prev.includes(value)
+      ? prev.filter((loc) => loc !== value)
+      : [...prev, value]
+  );
+};
 
   return (
     <form
@@ -81,6 +92,43 @@ const AdminProductUpdate = ({ isUpdate = false, existingData = {} }) => {
         <option value="Housekeeping">Housekeeping</option>
         {/* Add more */}
       </select>
+      <div className="mt-4">
+  <label className="d-block mb-2 fw-bold">Display Product On:</label>
+  <div className="form-check">
+    <input
+      type="checkbox"
+      className="form-check-input"
+      id="home"
+      value="home"
+      checked={displayLocations.includes("home")}
+      onChange={handleDisplayChange}
+    />
+    <label className="form-check-label" htmlFor="home">Homepage</label>
+  </div>
+  <div className="form-check">
+    <input
+      type="checkbox"
+      className="form-check-input"
+      id="stationary"
+      value="stationary"
+      checked={displayLocations.includes("stationary")}
+      onChange={handleDisplayChange}
+    />
+    <label className="form-check-label" htmlFor="stationary">Stationary Dropdown</label>
+  </div>
+  <div className="form-check">
+    <input
+      type="checkbox"
+      className="form-check-input"
+      id="cleaning"
+      value="cleaning"
+      checked={displayLocations.includes("cleaning")}
+      onChange={handleDisplayChange}
+    />
+    <label className="form-check-label" htmlFor="cleaning">Cleaning Dropdown</label>
+  </div>
+</div>
+
       <input
         value={price}
         onChange={(e) => setPrice(e.target.value)}
