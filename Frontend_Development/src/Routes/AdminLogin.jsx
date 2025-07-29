@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from 'axios';
 import { useAuth } from "../context/useAuth";
+import StatusMessage from "../component/StatusMessage"; 
 
 function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -11,6 +12,7 @@ function AdminLogin() {
   const [loginSuccess, setLoginSuccess] = useState(false);
   const navigate = useNavigate();
   const { loginAsAdmin } = useAuth();
+  const [msg, setMsg] = useState({ type: "", text: "" });
 
 const handleLogin = async () => {
   if (!email || !password) {
@@ -31,7 +33,9 @@ const handleLogin = async () => {
       localStorage.setItem("adminToken", response.data.token);
       localStorage.setItem("adminName", response.data.admin.name);
       setLoginSuccess(true);
-      setError("");
+setError("");
+setMsg({ type: "success", text: "✅ Login successful!" });
+
     } else {
       setLoginSuccess(false);
       setError(response.data.message || "Invalid credentials");
@@ -90,6 +94,14 @@ const handleLogin = async () => {
           </div>
         )}
       </div>
+      {msg.text && (
+  <StatusMessage
+    type={msg.type}
+    message={msg.text}
+    onClose={() => setMsg({ type: "", text: "" })}
+  />
+)}
+
     </div>
   );
 }

@@ -140,7 +140,10 @@ const DeleteUser = () => {
       {/* ✅ Confirmation Dialog */}
       <ConfirmDialog
         show={showConfirm}
-        onHide={() => setShowConfirm(false)}
+        onCancel={() => {
+          setShowConfirm(false);
+          setSelectedUserId(null);
+        }}
         onConfirm={() => handleDelete(selectedUserId)}
         title="Delete Confirmation"
         message="Are you sure you want to delete this user?"

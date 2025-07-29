@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from "react";
+import ConfirmDialog from "./ConfirmDialog";
+import StatusMessage from "./StatusMessage";
 import axios from "axios";
 
 const AdminBannerUploader = () => {
   const [title, setTitle] = useState("");
   const [image, setImage] = useState(null);
   const [banners, setBanners] = useState([]);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [selectedBannerId, setSelectedBannerId] = useState(null);
+  const [msg, setMsg] = useState({ type: "", text: "" });
 
   const fetchBanners = async () => {
     try {
@@ -37,23 +42,31 @@ const AdminBannerUploader = () => {
       setTitle("");
       setImage(null);
       fetchBanners();
-      alert("Banner uploaded successfully");
+      setMsg({ type: "success", text: "Banner uploaded successfully" });
     } catch (err) {
       console.error("Error uploading banner:", err);
-      alert("Failed to upload banner");
+      setMsg({ type: "danger", text: "Failed to upload banner" });
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this banner?")) return;
+  const confirmDeleteBanner = (id) => {
+    setSelectedBannerId(id);
+    setShowConfirm(true);
+  };
 
+  const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:5000/api/banner/${id}`);
+      await axios.delete(
+        `http://localhost:5000/api/banner/${selectedBannerId}`
+      );
       fetchBanners(); // Refresh list
-      alert("Banner deleted successfully");
+      setMsg({ type: "success", text: "Banner deleted successfully" });
     } catch (err) {
       console.error("Error deleting banner:", err);
-      alert("Failed to delete banner");
+      setMsg({ type: "danger", text: "Failed to delete banner" });
+    } finally {
+      setShowConfirm(false);
+      setSelectedBannerId(null);
     }
   };
 
@@ -100,7 +113,7 @@ const AdminBannerUploader = () => {
                 <h5 className="card-title mb-0">{banner.title}</h5>
                 <button
                   className="btn btn-sm btn-danger"
-                  onClick={() => handleDelete(banner._id)}
+                  onClick={() => confirmDeleteBanner(banner._id)}
                 >
                   Delete
                 </button>
@@ -109,6 +122,23 @@ const AdminBannerUploader = () => {
           </div>
         ))}
       </div>
+      <ConfirmDialog
+        show={showConfirm}
+        onCancel={() => {
+          setShowConfirm(false);
+          setSelectedBannerId(null);
+        }}
+        onConfirm={handleDelete}
+        title="Delete Confirmation"
+        message="Are you sure you want to delete this banner?"
+      />
+      {msg.text && (
+        <StatusMessage
+          type={msg.type}
+          message={msg.text}
+          onClose={() => setMsg({ type: "", text: "" })}
+        />
+      )}
     </div>
   );
 };
