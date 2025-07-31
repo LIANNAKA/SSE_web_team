@@ -64,7 +64,8 @@ const DeleteUser = () => {
       (u) =>
         u.name?.toLowerCase().includes(term) ||
         u.email?.toLowerCase().includes(term) ||
-        u.mobile?.toLowerCase().includes(term)
+        u.mobile?.toLowerCase().includes(term) ||
+        u.userId?.toLowerCase().includes(term)
     );
     setFilteredUsers(filtered);
   }, [searchTerm, users]);
@@ -77,7 +78,7 @@ const DeleteUser = () => {
       <InputGroup className="mb-3">
         <Form.Control
           type="text"
-          placeholder="Search by name, email, or mobile"
+          placeholder="Search by name, email, mobile, or User ID"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -107,7 +108,7 @@ const DeleteUser = () => {
               <th>Name</th>
               <th>Email</th>
               <th>Mobile</th>
-              <th>Address</th>
+              <th>User ID</th>
               <th>Action</th>
             </tr>
           </thead>
@@ -118,7 +119,7 @@ const DeleteUser = () => {
                 <td>{u.name}</td>
                 <td>{u.email}</td>
                 <td>{u.mobile || "-"}</td>
-                <td>{u.address || "-"}</td>
+                <td>{u.userId || "-"}</td>
                 <td>
                   <Button
                     variant="danger"

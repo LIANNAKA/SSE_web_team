@@ -66,6 +66,7 @@ const UserList = () => {
                 <th>Name</th>
                 <th>Email</th>
                 <th>Mobile</th>
+                <th>Address</th>
                 <th>Registered Date</th>
                 <th>Registered Time</th>
             </tr>
@@ -80,6 +81,7 @@ const UserList = () => {
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.mobile || "-"}</td>
+                <td>{user.address || "-"}</td>
                 <td>{dateTime.toLocaleDateString()}</td>
                 <td>{dateTime.toLocaleTimeString()}</td>
               </tr>

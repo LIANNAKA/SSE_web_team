@@ -16,7 +16,6 @@ const AdminSidebar = ({ setActiveSection }) => {
       <h5 className="mb-4 text-uppercase">Admin Panel</h5>
 
       <button onClick={() => setActiveSection("userlist")} className="btn btn-link d-block text-start text-decoration-none text-uppercase">User List</button>
-      <button onClick={() => setActiveSection("createuser")} className="btn btn-link d-block text-start text-decoration-none text-uppercase">Create User</button>
       <button onClick={() => setActiveSection("deleteuser")} className="btn btn-link d-block text-start text-decoration-none text-uppercase">Delete User</button>
       <button onClick={() => setActiveSection("productlist")} className="btn btn-link d-block text-start text-decoration-none text-uppercase">Product List</button>
       <button onClick={() => setActiveSection("forgotreset")} className="btn btn-link d-block text-start text-decoration-none text-uppercase">Forgot Password</button>

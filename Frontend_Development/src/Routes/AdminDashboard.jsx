@@ -5,7 +5,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import AdminProductForm from "../component/AdminProductUpload"
 import AdminSidebar from "../component/AdminSidebar";
 import UserList from "../component/UserList";
-import CreateUser from "../component/CreateUser";
 import DeleteUser from "../component/DeleteUser";
 import ProductList from "../component/ProductList";
 import ForgotResetAdminPass from "../component/ForgotResetAdminPass";
@@ -23,8 +22,6 @@ const AdminDashboard = () => {
     switch (activeSection) {
       case "userlist":
         return <UserList />;
-      case "createuser":
-        return <CreateUser />;
       case "deleteuser":
         return <DeleteUser />;
       case "productlist":
