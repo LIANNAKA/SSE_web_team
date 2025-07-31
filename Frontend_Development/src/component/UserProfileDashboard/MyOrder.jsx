@@ -48,59 +48,94 @@ const MyOrders = () => {
       });
   }, []);
 
-  const renderOrderTable = (orders) => (
-    <Table striped bordered hover responsive>
-      <thead>
-        <tr>
-          <th>Order ID</th>
-          <th>Items</th>
-          <th>Total Amount</th>
-          <th>Status</th>
-          <th>Ordered On</th>
-        </tr>
-      </thead>
-      <tbody>
-        {orders.map((order, index) => (
-          <tr key={index}>
-            <td>{order._id || "N/A"}</td>
+  const handleCancelOrder = async (orderId) => {
+  if (!window.confirm("Are you sure you want to cancel this order?")) return;
+
+  try {
+    await axios.patch(`http://localhost:5000/api/orders/cancel/${orderId}`, {}, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    // Update the UI without reloading
+    setCurrentOrders((prev) => prev.filter((o) => o._id !== orderId));
+    const cancelledOrder = currentOrders.find((o) => o._id === orderId);
+    if (cancelledOrder) {
+      cancelledOrder.status = "cancelled";
+      setPastOrders((prev) => [cancelledOrder, ...prev]);
+    }
+  } catch (error) {
+    console.error("Cancel error:", error);
+    alert("Failed to cancel the order. Please try again.");
+  }
+};
+
+const renderOrderTable = (orders, isCurrent = false) => (
+  <Table striped bordered hover responsive>
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Items</th>
+        <th>Total Amount</th>
+        <th>Status</th>
+        <th>Ordered On</th>
+        {isCurrent && <th>Action</th>}
+      </tr>
+    </thead>
+    <tbody>
+      {orders.map((order, index) => (
+        <tr key={index}>
+          <td>{order._id || "N/A"}</td>
+          <td>
+            {Array.isArray(order.orderItems) && order.orderItems.length > 0 ? (
+              order.orderItems.map((item, i) => (
+                <div key={i}>
+                  {item.name} × {item.quantity}
+                </div>
+              ))
+            ) : (
+              <div>No items</div>
+            )}
+          </td>
+          <td>₹{order.totalPrice || "N/A"}</td>
+          <td
+            className={`text-capitalize fw-semibold ${
+              order.status === "cancelled"
+                ? "text-danger"
+                : order.status === "delivered"
+                ? "text-success"
+                : "text-primary"
+            }`}
+          >
+            {order.status || "N/A"}
+          </td>
+          <td>
+            {order.createdAt
+              ? new Date(order.createdAt).toLocaleDateString()
+              : "Date N/A"}
+          </td>
+          {isCurrent && (
             <td>
-              {Array.isArray(order.orderItems) && order.orderItems.length > 0 ? (
-                order.orderItems.map((item, i) => (
-                  <div key={i}>
-                    {item.name} × {item.quantity}
-                  </div>
-                ))
-              ) : (
-                <div>No items</div>
+              {order.status !== "cancelled" && (
+                <button
+                  className="btn btn-sm btn-outline-danger"
+                  onClick={() => handleCancelOrder(order._id)}
+                >
+                  Cancel
+                </button>
               )}
             </td>
-            <td>₹{order.totalPrice || "N/A"}</td>
-            <td
-              className={`text-capitalize fw-semibold ${
-                order.status === "cancelled"
-                  ? "text-danger"
-                  : order.status === "delivered"
-                  ? "text-success"
-                  : "text-primary"
-              }`}
-            >
-              {order.status || "N/A"}
-            </td>
-            <td>
-              {order.createdAt
-                ? new Date(order.createdAt).toLocaleDateString()
-                : "Date N/A"}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </Table>
-  );
+          )}
+        </tr>
+      ))}
+    </tbody>
+  </Table>
+);
 
+  
   if (loading) {
     return (
       <Container className="text-center mt-5">
-        <Spinner animation="border" />
+      <Spinner animation="border" />
       </Container>
     );
   }
@@ -113,21 +148,22 @@ const MyOrders = () => {
         {error && <Alert variant="danger">{error}</Alert>}
 
         <Tabs defaultActiveKey="current" className="mb-3" fill>
-          <Tab eventKey="current" title="📦 Current Orders">
-            {currentOrders.length > 0 ? (
-              renderOrderTable(currentOrders)
-            ) : (
-              <p>No active orders at the moment.</p>
-            )}
-          </Tab>
-          <Tab eventKey="past" title="📜 Order History">
-            {pastOrders.length > 0 ? (
-              renderOrderTable(pastOrders)
-            ) : (
-              <p>No past orders found.</p>
-            )}
-          </Tab>
-        </Tabs>
+  <Tab eventKey="current" title="📦 Current Orders">
+    {currentOrders.length > 0 ? (
+      renderOrderTable(currentOrders, true)  // Pass `true` here
+    ) : (
+      <p>No active orders at the moment.</p>
+    )}
+  </Tab>
+  <Tab eventKey="past" title="📜 Order History">
+    {pastOrders.length > 0 ? (
+      renderOrderTable(pastOrders)
+    ) : (
+      <p>No past orders found.</p>
+    )}
+  </Tab>
+</Tabs>
+
       </Card>
     </Container>
   );
