@@ -20,46 +20,46 @@ const Cart = () => {
       });
   }, []);
 
-  // Update Quantity
   const updateQuantity = (productId, newQty) => {
     if (newQty < 1) return;
 
     fetch(`http://localhost:5000/api/cart/${productId}`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ quantity: newQty }),
     })
       .then((res) => res.json())
       .then((updatedItem) => {
         setCartItems((prevItems) =>
           prevItems.map((item) =>
-            item.productId === productId ? { ...item, quantity: updatedItem.quantity } : item
+            item.productId === productId
+              ? { ...item, quantity: updatedItem.quantity }
+              : item
           )
         );
       })
       .catch((err) => console.error("Error updating quantity:", err));
   };
 
-  // Remove Item
   const removeFromCart = (productId) => {
     fetch(`http://localhost:5000/api/cart/${productId}`, {
       method: "DELETE",
     })
       .then(() => {
-        setCartItems((prevItems) => prevItems.filter((item) => item.productId !== productId));
+        setCartItems((prevItems) =>
+          prevItems.filter((item) => item.productId !== productId)
+        );
       })
       .catch((err) => console.error("Error removing item:", err));
   };
 
-  // Calculate Total
   const calculateTotal = () =>
     cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
     <div className="container mt-5">
-      <h2 className="mb-4 text-center">🛒 Your Cart</h2>
+      <h2 className="mb-4 text-center">CART</h2>
+
       {loading ? (
         <div className="text-center">Loading...</div>
       ) : cartItems.length === 0 ? (
@@ -67,64 +67,67 @@ const Cart = () => {
       ) : (
         <div className="row">
           {/* Cart Items */}
-          <div className="col-md-8">
+          <div className="col-12 col-md-8">
             {cartItems.map((item) => (
-              <div key={item.productId} className="card mb-3 shadow-sm">
-                <div className="row g-0 align-items-center">
-                  <div className="col-md-3">
+              <div key={item.productId} className="card mb-4 shadow-sm p-3">
+                <div className="row g-3 align-items-center">
+
+                  {/* Product Image */}
+                  <div className="col-12 col-sm-3 text-center">
                     <img
                       src={`http://localhost:5000${item.image}`}
                       alt={item.name}
-                      className="img-fluid rounded-start"
-                      style={{ maxHeight: "120px", objectFit: "cover" }}
+                      className="img-fluid rounded"
+                      style={{
+                        maxWidth: "100px",
+                        height: "auto",
+                        objectFit: "cover",
+                      }}
                       onError={(e) => {
-                        e.target.src = "/default-product.png"; // fallback
+                        e.target.src = "/default-product.png";
                       }}
                     />
                   </div>
-                  <div className="col-md-9">
-                    <div className="card-body">
-                      <h5 className="card-title">{item.name}</h5>
-                      {/* <p className="card-text" style={{ minHeight: "2em" }}>
-                        {item.description || "No description available."}
-                      </p> */}
-                      <p className="card-text mb-1">Price: ₹{item.price}</p>
 
-                      {/* Quantity Controls */}
-                      <div className="d-flex align-items-center mb-2 gap-2">
-                        <button
-                          className="btn btn-outline-secondary btn-sm"
-                          onClick={() =>
-                            updateQuantity(item.productId, item.quantity - 1)
-                          }
-                        >
-                          -
-                        </button>
-                        <span>{item.quantity}</span>
-                        <button
-                          className="btn btn-outline-secondary btn-sm"
-                          onClick={() =>
-                            updateQuantity(item.productId, item.quantity + 1)
-                          }
-                        >
-                          +
-                        </button>
-                      </div>
+                  {/* Product Info */}
+                  <div className="col-12 col-sm-5 text-center text-sm-start">
+                    <h5 className="mb-2">{item.name}</h5>
+                    <p className="mb-1">
+                      <strong>Price:</strong> ₹{item.price}
+                    </p>
+                    <p className="text-muted mb-0">
+                      <small>Subtotal: ₹{item.price * item.quantity}</small>
+                    </p>
+                  </div>
 
-                      <p className="card-text mb-0">
-                        <small className="text-muted">
-                          Subtotal: ₹{item.price * item.quantity}
-                        </small>
-                      </p>
-
-                      {/* Remove Button */}
+                  {/* Quantity & Remove */}
+                  <div className="col-12 col-sm-4 text-center text-sm-end">
+                    <div className="d-flex justify-content-center justify-content-sm-end align-items-center gap-2 flex-wrap mb-2">
                       <button
-                        className="btn btn-danger btn-sm mt-2"
-                        onClick={() => removeFromCart(item.productId)}
+                        className="btn btn-outline-secondary btn-sm"
+                        onClick={() =>
+                          updateQuantity(item.productId, item.quantity - 1)
+                        }
+                        disabled={item.quantity === 1}
                       >
-                        🗑 Remove
+                        -
+                      </button>
+                      <span className="px-2">{item.quantity}</span>
+                      <button
+                        className="btn btn-outline-secondary btn-sm"
+                        onClick={() =>
+                          updateQuantity(item.productId, item.quantity + 1)
+                        }
+                      >
+                        +
                       </button>
                     </div>
+                    <button
+                      className="btn btn-danger btn-sm"
+                      onClick={() => removeFromCart(item.productId)}
+                    >
+                      🗑 Remove
+                    </button>
                   </div>
                 </div>
               </div>
@@ -132,9 +135,9 @@ const Cart = () => {
           </div>
 
           {/* Cart Summary */}
-          <div className="col-md-4">
+          <div className="col-12 col-md-4 mt-4 mt-md-0">
             <div className="card bg-light shadow-sm">
-              <div className="card-body">
+              <div className="card-body text-center text-md-start">
                 <h4 className="card-title">Total Bill</h4>
                 <hr />
                 <p className="fs-5">₹ {calculateTotal()}</p>
