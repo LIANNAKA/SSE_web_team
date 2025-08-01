@@ -51,19 +51,31 @@ export const getAllOrders = async (req, res) => {
 };
 
 // PUT /api/admin/update-order-status/:id
+// PUT /api/admin/update-order-status/:id
 export const updateOrderStatus = async (req, res) => {
   const { status } = req.body;
   try {
-    const order = await Order.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true }
-    );
-    res.json(order);
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // 🔒 Prevent updating a cancelled order
+    if (order.status === "cancelled") {
+      return res.status(400).json({ message: "Cannot update a cancelled order" });
+    }
+
+    order.status = status;
+    const updatedOrder = await order.save();
+
+    res.json(updatedOrder);
   } catch (err) {
+    console.error("Update order status error:", err);
     res.status(500).json({ message: "Failed to update order status" });
   }
 };
+
 
 export const cancelOrder = async (req, res) => {
   try {

@@ -99,7 +99,9 @@ const AdminOrderStatusPage = () => {
                       onChange={(e) =>
                         handleStatusChange(order._id, e.target.value)
                       }
-                      disabled={updating === order._id}
+                      disabled={
+                        updating === order._id || order.status === "cancelled"
+                      }
                       className="form-select-sm"
                     >
                       {statusOptions.map((status) => (
@@ -108,6 +110,7 @@ const AdminOrderStatusPage = () => {
                         </option>
                       ))}
                     </Form.Select>
+
                     {updating === order._id && (
                       <div className="mt-1 text-primary">
                         <Spinner size="sm" animation="border" />
