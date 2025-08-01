@@ -1,12 +1,11 @@
-// OrderStatusPage.jsx
+// AdminOrderStatusPage.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Table, Button, Form } from "react-bootstrap";
+import { Table, Form, Spinner } from "react-bootstrap";
 
 const AdminOrderStatusPage = () => {
   const [orders, setOrders] = useState([]);
-  const [updating, setUpdating] = useState(null); // To track status update in progress
-
+  const [updating, setUpdating] = useState(null);
   const token = localStorage.getItem("adminToken");
 
   useEffect(() => {
@@ -38,7 +37,7 @@ const AdminOrderStatusPage = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      await fetchOrders(); // refresh data
+      await fetchOrders();
       setUpdating(null);
     } catch (error) {
       console.error(error);
@@ -56,17 +55,18 @@ const AdminOrderStatusPage = () => {
   ];
 
   return (
-    <div className="container mt-4">
-      <h2>📦 Order Status</h2>
+    <div className="container">
+      <h2 className="mb-4">📦 Admin Order Status</h2>
+
       {orders.length === 0 ? (
-        <p>No orders yet.</p>
+        <p className="text-muted text-center">No orders found.</p>
       ) : (
-        <table bordered striped hover responsive>
+        <Table bordered hover responsive className="shadow-sm">
           <thead className="table-dark">
             <tr>
               <th>User</th>
               <th>Address</th>
-              <th>Items</th>
+              <th>Items Ordered</th>
               <th>Total Amount</th>
               <th>Status</th>
               <th>Change Status</th>
@@ -78,19 +78,16 @@ const AdminOrderStatusPage = () => {
               .filter((order) => order.user)
               .map((order) => (
                 <tr key={order._id}>
-                  <td>{order.user?.name}</td>
-                  <td>{order.user?.address}</td>
+                  <td>{order.user.name}</td>
+                  <td>{order.user.address}</td>
                   <td>
-                    {Array.isArray(order.orderItems) &&
-                    order.orderItems.length > 0 ? (
-                      order.orderItems.map((item, i) => (
-                        <div key={i}>
+                    <ul className="mb-0 ps-3">
+                      {order.orderItems?.map((item, idx) => (
+                        <li key={idx}>
                           {item.name} × {item.quantity}
-                        </div>
-                      ))
-                    ) : (
-                      <span>No items</span>
-                    )}
+                        </li>
+                      ))}
+                    </ul>
                   </td>
                   <td>₹{order.totalPrice || "N/A"}</td>
                   <td className="text-capitalize fw-semibold">
@@ -103,6 +100,7 @@ const AdminOrderStatusPage = () => {
                         handleStatusChange(order._id, e.target.value)
                       }
                       disabled={updating === order._id}
+                      className="form-select-sm"
                     >
                       {statusOptions.map((status) => (
                         <option key={status} value={status}>
@@ -110,30 +108,25 @@ const AdminOrderStatusPage = () => {
                         </option>
                       ))}
                     </Form.Select>
+                    {updating === order._id && (
+                      <div className="mt-1 text-primary">
+                        <Spinner size="sm" animation="border" />
+                      </div>
+                    )}
                   </td>
-                  <td>{new Date(order.createdAt).toLocaleString()}</td>
+                  <td>
+                    {new Date(order.createdAt).toLocaleString("en-IN", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })}
+                  </td>
                 </tr>
               ))}
           </tbody>
-        </table>
+        </Table>
       )}
     </div>
   );
 };
 
 export default AdminOrderStatusPage;
-
-// PUT /api/admin/update-order-status/:id
-// router.put('/admin/update-order-status/:id', verifyAdmin, async (req, res) => {
-//   const { status } = req.body;
-//   try {
-//     const order = await Order.findByIdAndUpdate(
-//       req.params.id,
-//       { status },
-//       { new: true }
-//     );
-//     res.json(order);
-//   } catch (err) {
-//     res.status(500).json({ message: "Failed to update order status" });
-//   }
-// });

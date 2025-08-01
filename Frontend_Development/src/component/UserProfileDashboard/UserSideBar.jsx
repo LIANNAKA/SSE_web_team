@@ -14,9 +14,6 @@ const UserSidebar = ({ setActiveSection, handleLogout }) => {
       <button className="btn btn-link d-block text-start text-decoration-none text-uppercase text-dark" onClick={() => setActiveSection("order")}>
         Orders
       </button>
-      <button className="btn btn-link d-block text-start text-decoration-none text-uppercase text-dark" onClick={() => setActiveSection("offers")}>
-        My Offers
-      </button>
       <button className="btn btn-link d-block text-start text-decoration-none text-uppercase text-dark" onClick={() => setActiveSection("wishlist")}>
         Wishlist
       </button>

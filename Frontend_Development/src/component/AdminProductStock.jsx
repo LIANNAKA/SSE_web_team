@@ -26,20 +26,26 @@ const AdminProductStock = () => {
   };
 
   const handleUpdateStock = async (id) => {
-  const updatedStock = parseInt(stockInputs[id]);
-  if (isNaN(updatedStock) || updatedStock < 0) {
-    alert("Please enter a valid non-negative number");
-    return;
-  }
+    const inputValue = parseInt(stockInputs[id]);
+    if (isNaN(inputValue)) {
+      alert("Please enter a valid number");
+      return;
+    }
+
+    const currentProduct = products.find((p) => p.productId === id);
+    const newStock = currentProduct.stock + inputValue;
+
+    if (newStock < 0) {
+      alert("Stock insufficient. You cannot reduce below current stock.");
+      return;
+    }
 
     try {
-      const currentProduct = products.find((p) => p.productId === id);
-      const newStock = currentProduct.stock + updatedStock;
-
       await axiosInstance.put(`/products/update-by-productid/${id}`, {
         stock: newStock,
       });
 
+      setStockInputs({ ...stockInputs, [id]: "" }); // Clear input after update
       fetchProducts(); // Refresh updated data
     } catch (err) {
       console.error("Error updating stock:", err);
@@ -98,7 +104,7 @@ const AdminProductStock = () => {
                       onChange={(e) =>
                         handleStockChange(prod.productId, e.target.value)
                       }
-                      placeholder="New quantity"
+                      placeholder="± Quantity"
                     />
                     <button
                       className="btn btn-sm btn-primary"

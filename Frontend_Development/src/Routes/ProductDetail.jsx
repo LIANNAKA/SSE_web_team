@@ -136,7 +136,8 @@ console.log("Raw product.imageUrl:", product.imageUrl);
             </div>
 
             <button
-              className="btn btn-primary"
+              className="btn btn-primary w-100 w-sm-50 w-md-25"
+               style={{ fontSize: "14px", padding: "8px 16px" }}
               onClick={handleBuy}
               disabled={product.stock === 0}
             >

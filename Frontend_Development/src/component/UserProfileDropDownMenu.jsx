@@ -33,9 +33,6 @@ const UserProfileDropDown = ({ userName, onLogout }) => {
           {" "}
           Wishlist
         </Dropdown.Item>
-        <Dropdown.Item onClick={() => navigate("/offers")}>
-          Offers
-        </Dropdown.Item>
         <Dropdown.Item onClick={() => navigate("/address")}>
           {" "}
           Manage Addresses

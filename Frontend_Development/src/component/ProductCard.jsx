@@ -33,10 +33,26 @@ const ProductCard = ({ category = "all" }) => {
   }, []);
 
   const handleQuantityChange = (id, delta) => {
-    setQuantities((prev) => ({
-      ...prev,
-      [id]: Math.max(1, (prev[id] || 1) + delta),
-    }));
+    setQuantities((prev) => {
+      const currentQuantity = prev[id] || 1;
+      const product = products.find((p) => p.productId === id);
+
+      if (!product) return prev;
+
+      const newQuantity = currentQuantity + delta;
+
+      // Ensure quantity stays between 1 and available stock
+      if (newQuantity < 1) return prev;
+      if (newQuantity > product.stock) {
+        alert(`Only ${product.stock} units in stock.`);
+        return prev;
+      }
+
+      return {
+        ...prev,
+        [id]: newQuantity,
+      };
+    });
   };
 
   const handleAddToCart = (product, quantity) => {
@@ -140,8 +156,16 @@ const ProductCard = ({ category = "all" }) => {
                     size="sm"
                     className="mt-3"
                     onClick={() => handleBuy(prod)}
+                    disabled={
+                      prod.stock === 0 ||
+                      quantities[prod.productId] > prod.stock
+                    }
                   >
-                    Buy
+                    {prod.stock === 0
+                      ? "Out of Stock"
+                      : (quantities[prod.productId] ?? 0) > prod.stock
+                      ? "Exceeds Stock"
+                      : "Buy"}
                   </Button>
                 </Card.Body>
               </Card>
