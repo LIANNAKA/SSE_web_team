@@ -222,15 +222,17 @@ const Navbar = ({ setShowLoginModal }) => {
               </NavDropdown.Item>
             </NavDropdown>
           </li>
-          <li className="nav-item">
-            <Link
-              className="nav-link px-4"
-              to="/cart"
-              onClick={() => setIsOpen(false)}
-            >
-              Cart
-            </Link>
-          </li>
+          {localStorage.getItem("userRole") !== "admin" && (
+            <li className="nav-item">
+              <Link
+                className="nav-link px-4"
+                to="/cart"
+                onClick={() => setIsOpen(false)}
+              >
+                Cart
+              </Link>
+            </li>
+          )}
           <li className="nav-item">
             {isLoggedIn ? (
               localStorage.getItem("userRole") === "admin" ? (
