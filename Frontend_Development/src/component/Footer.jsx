@@ -28,11 +28,13 @@ const Footer = () => {
           <Col md={2} lg={2} xl={2} className="mb-4">
             <h5 className="text-uppercase fw-bold mb-4">Get Help</h5>
             <ul className="list-unstyled">
-              <li><a href="#" className="text-white text-decoration-none">FAQ</a></li>
+              {/* <li><a href="#" className="text-white text-decoration-none">FAQ</a></li>
               <li><a href="#" className="text-white text-decoration-none">Shipping</a></li>
-              <li><a href="#" className="text-white text-decoration-none">Returns</a></li>
-              <li><Link to="/adminorderstatus" className="text-white text-decoration-none">Orders</Link></li>
-              <li><a href="#" className="text-white text-decoration-none">Payment Options</a></li>
+              <li><a href="#" className="text-white text-decoration-none">Returns</a></li> */}
+              <li>Email ID</li>
+              <li>Contact Us</li>
+              {/* <li><Link to="/adminorderstatus" className="text-white text-decoration-none">Orders</Link></li>
+              <li><a href="#" className="text-white text-decoration-none">Payment Options</a></li> */}
             </ul>
           </Col>
 

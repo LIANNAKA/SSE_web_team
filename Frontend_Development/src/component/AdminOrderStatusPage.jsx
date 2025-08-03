@@ -1,11 +1,12 @@
-// AdminOrderStatusPage.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Table, Form, Spinner } from "react-bootstrap";
+import StatusMessage from "./StatusMessage";
 
 const AdminOrderStatusPage = () => {
   const [orders, setOrders] = useState([]);
   const [updating, setUpdating] = useState(null);
+  const [message, setMessage] = useState(null); 
   const token = localStorage.getItem("adminToken");
 
   useEffect(() => {
@@ -30,15 +31,20 @@ const AdminOrderStatusPage = () => {
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       setUpdating(orderId);
-      await axios.put(
+      const res = await axios.put(
         `http://localhost:5000/api/orders/admin/update-order-status/${orderId}`,
         { status: newStatus },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
       await fetchOrders();
       setUpdating(null);
+
+      if (res.data.message) {
+        setMessage(res.data.message);
+      }
     } catch (error) {
       console.error(error);
       alert("Failed to update order status");
@@ -127,6 +133,15 @@ const AdminOrderStatusPage = () => {
               ))}
           </tbody>
         </Table>
+      )}
+
+      {/* Popup for stock update message */}
+      {message && (
+        <StatusMessage
+          type="success"
+          message={message}
+          onClose={() => setMessage(null)}
+        />
       )}
     </div>
   );

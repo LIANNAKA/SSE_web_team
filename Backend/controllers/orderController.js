@@ -54,24 +54,39 @@ export const getAllOrders = async (req, res) => {
 // PUT /api/admin/update-order-status/:id
 export const updateOrderStatus = async (req, res) => {
   const { status } = req.body;
-  try {
-    const order = await Order.findById(req.params.id);
 
+  try {
+    const order = await Order.findById(req.params.orderId);
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // 🔒 Prevent updating a cancelled order
     if (order.status === "cancelled") {
       return res.status(400).json({ message: "Cannot update a cancelled order" });
     }
 
-    order.status = status;
-    const updatedOrder = await order.save();
+    let stockMessage = "";
 
-    res.json(updatedOrder);
-  } catch (err) {
-    console.error("Update order status error:", err);
+    // Only adjust stock if status changed to delivered
+    if (status === "delivered" && order.status !== "delivered") {
+      for (const item of order.orderItems) {
+        const product = await Product.findById(item.product);
+        if (product) {
+          product.stock = product.stock - item.quantity;
+          await product.save();
+          stockMessage += `${product.name}: -${item.quantity} units\n`;
+        }
+      }
+    }
+
+    order.status = status;
+    await order.save();
+
+    res.status(200).json({
+      message: stockMessage || "Order status updated",
+    });
+  } catch (error) {
+    console.error("Order update error:", error);
     res.status(500).json({ message: "Failed to update order status" });
   }
 };
