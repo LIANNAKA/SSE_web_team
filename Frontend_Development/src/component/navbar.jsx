@@ -12,6 +12,8 @@ const Navbar = ({ setShowLoginModal }) => {
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [userName, setUserName] = useState(() => {
+    const role = localStorage.getItem("userRole");
+    if (role === "admin") return localStorage.getItem("userName") || "Admin";
     const user = JSON.parse(localStorage.getItem("user"));
     return user?.name || "";
   });
@@ -35,22 +37,42 @@ const Navbar = ({ setShowLoginModal }) => {
 
   useEffect(() => {
     const handleStorageChange = () => {
-      const updatedToken = localStorage.getItem("token");
-      const user = JSON.parse(localStorage.getItem("user"));
-      setIsLoggedIn(!!updatedToken);
-      setUserName(user?.name || "");
+      const role = localStorage.getItem("userRole");
+
+      if (role === "admin") {
+        setIsLoggedIn(true);
+        setUserName("Admin");
+      } else if (role === "user") {
+        const user = JSON.parse(localStorage.getItem("user"));
+        setIsLoggedIn(true);
+        setUserName(user?.name || "");
+      } else {
+        setIsLoggedIn(false);
+        setUserName("");
+      }
     };
 
+    // Listen to both 'storage' and custom 'forceNavbarUpdate'
     window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
+    window.addEventListener("forceNavbarUpdate", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("forceNavbarUpdate", handleStorageChange);
+    };
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("user");
     localStorage.removeItem("userName");
+    localStorage.removeItem("userRole");
+
     setIsLoggedIn(false);
     setUserName("");
-    window.dispatchEvent(new Event("storage"));
+
+    window.dispatchEvent(new Event("storage")); // update navbar
     navigate("/");
   };
 
@@ -211,13 +233,38 @@ const Navbar = ({ setShowLoginModal }) => {
           </li>
           <li className="nav-item">
             {isLoggedIn ? (
-              <UserProfileDropDown
-                userName={userName}
-                onLogout={handleLogout}
-              />
+              localStorage.getItem("userRole") === "admin" ? (
+                <div className="nav-item dropdown">
+                  <button
+                    className="btn nav-link dropdown-toggle text-white"
+                    id="adminDropdown"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Admin
+                  </button>
+                  <ul className="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <Link className="dropdown-item" to="/admin">
+                        Admin Dashboard
+                      </Link>
+                    </li>
+                    <li>
+                      <button className="dropdown-item" onClick={handleLogout}>
+                        Logout
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              ) : (
+                <UserProfileDropDown
+                  userName={userName}
+                  onLogout={handleLogout}
+                />
+              )
             ) : (
               <button
-                className="btn nav-link px-4 bg-transparent border-0"
+                className="btn nav-link px-4 bg-transparent border-0 text-white"
                 onClick={() => setShowLoginModal(true)}
               >
                 Login

@@ -82,6 +82,8 @@ const handleLogin = async () => {
     localStorage.setItem("userRole", "admin");
     localStorage.setItem("userName", adminData.admin.name || loginEmail);
 
+    window.dispatchEvent(new Event("forceNavbarUpdate"));
+
     setMessage("✅ Welcome Admin!");
     setTimeout(() => {
       setShowLoginModal(false);
@@ -102,6 +104,8 @@ const handleLogin = async () => {
       localStorage.setItem("userRole", "user");
       localStorage.setItem("userName", userData.user.name || loginEmail);
 
+      window.dispatchEvent(new Event("forceNavbarUpdate"));
+      
       window.dispatchEvent(new Event("storage")); // For navbar updates
 
       setMessage(
@@ -110,7 +114,7 @@ const handleLogin = async () => {
 
       setTimeout(() => {
         setShowLoginModal(false);
-        navigate("/user"); // or "/" based on your routing
+        navigate("/"); // or "/" based on your routing
       }, 1500);
     } catch (userError) {
       setMessage(
