@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
 import { InputGroup } from "react-bootstrap";
 import { FaSearch } from "react-icons/fa";
+import PurchaseMessage from "./PurchaseMessage"; // ✅ import it
 
 const AdminProductStock = () => {
   const [products, setProducts] = useState([]);
   const [stockInputs, setStockInputs] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
+  const [successMessage, setSuccessMessage] = useState(""); // ✅ message state
 
   useEffect(() => {
     fetchProducts();
@@ -45,8 +47,14 @@ const AdminProductStock = () => {
         stock: newStock,
       });
 
-      setStockInputs({ ...stockInputs, [id]: "" }); // Clear input after update
-      fetchProducts(); // Refresh updated data
+      setStockInputs({ ...stockInputs, [id]: "" });
+      fetchProducts();
+      const action = inputValue > 0 ? "increased" : "reduced";
+      setSuccessMessage(
+        `Stock for "${currentProduct.name}" ${action} by ${Math.abs(
+          inputValue
+        )}.`
+      );
     } catch (err) {
       console.error("Error updating stock:", err);
     }
@@ -62,6 +70,15 @@ const AdminProductStock = () => {
   return (
     <div className="container my-4">
       <h2 className="mb-4">Product Stock Management</h2>
+
+      {/* ✅ Show success message */}
+      {successMessage && (
+        <PurchaseMessage
+          type="success"
+          message={successMessage}
+          onClose={() => setSuccessMessage("")}
+        />
+      )}
 
       {/* 🔍 Search Bar */}
       <InputGroup className="mb-3">

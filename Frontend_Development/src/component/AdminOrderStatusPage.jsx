@@ -6,7 +6,8 @@ import StatusMessage from "./StatusMessage";
 const AdminOrderStatusPage = () => {
   const [orders, setOrders] = useState([]);
   const [updating, setUpdating] = useState(null);
-  const [message, setMessage] = useState(null); 
+  const [message, setMessage] = useState(null);
+  const [statusFilter, setStatusFilter] = useState(""); // "" means show all
   const token = localStorage.getItem("adminToken");
 
   useEffect(() => {
@@ -64,6 +65,23 @@ const AdminOrderStatusPage = () => {
     <div className="container">
       <h2 className="mb-4">📦 Admin Order Status</h2>
 
+      <div className="mb-3 d-flex align-items-center gap-2">
+        <label className="fw-semibold">Filter by Status:</label>
+        <Form.Select
+          size="sm"
+          style={{ maxWidth: "200px" }}
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+        >
+          <option value="">All</option>
+          {statusOptions.map((status) => (
+            <option key={status} value={status}>
+              {status.charAt(0).toUpperCase() + status.slice(1)}
+            </option>
+          ))}
+        </Form.Select>
+      </div>
+
       {orders.length === 0 ? (
         <p className="text-muted text-center">No orders found.</p>
       ) : (
@@ -80,8 +98,10 @@ const AdminOrderStatusPage = () => {
             </tr>
           </thead>
           <tbody>
-            {orders
+            {[...orders]
               .filter((order) => order.user)
+              .filter((order) => !statusFilter || order.status === statusFilter)
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
               .map((order) => (
                 <tr key={order._id}>
                   <td>{order.user.name}</td>

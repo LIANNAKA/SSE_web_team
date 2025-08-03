@@ -18,9 +18,9 @@ const Footer = () => {
               <li><a href="#" className="text-white text-decoration-none">Our Services</a></li>
               <li><a href="#" className="text-white text-decoration-none">Privacy Policy</a></li>
               <li><a href="#" className="text-white text-decoration-none">Affiliate Program</a></li>
-              <li>
+              {/* <li>
                 <Link to="/adminlogin" className="admin-button text-white text-decoration-none">Admin</Link>
-              </li>
+              </li> */}
             </ul>
           </Col>
 
