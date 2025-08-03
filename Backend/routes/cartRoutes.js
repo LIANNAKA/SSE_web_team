@@ -89,6 +89,23 @@ router.patch('/:productId', async (req, res) => {
   }
 });
 
+
+// DELETE /api/cart/clear — clear all items from the cart
+router.delete('/clear', async (req, res) => {
+  try {
+    let cart = await Cart.findOne({ userId: req.userId });
+    if (!cart) return res.status(404).json({ error: 'Cart not found' });
+    
+    cart.items = []; // empty the cart
+    await cart.save();
+
+    res.json({ message: 'Cart cleared successfully' });
+  } catch (error) {
+    console.error("Error clearing cart:", error);
+    res.status(500).json({ error: 'Failed to clear cart' });
+  }
+});
+
 // DELETE /api/cart/:productId — remove item from cart
 router.delete('/:productId', async (req, res) => {
   const { productId } = req.params;
@@ -104,5 +121,4 @@ router.delete('/:productId', async (req, res) => {
     res.status(500).json({ error: 'Failed to remove item' });
   }
 });
-
 export default router;

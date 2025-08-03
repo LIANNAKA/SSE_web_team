@@ -48,51 +48,61 @@ const CheckoutOrder = () => {
     0
   );
 
-  const handleOrder = async () => {
-    setOrderSending(true);
-    setMessage("");
-    setError("");
+const handleOrder = async () => {
+  setOrderSending(true);
+  setMessage("");
+  setError("");
 
-    const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
-    const orderPayload = {
-      orderItems: cartItems.map((item) => ({
-        name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-        product: item.productId,
-      })),
-      shippingAddress: {
-        address: shipping.address,
-        city: "Unknown", // or add a field to collect this
-        postalCode: "000000",
-        country: "India",
-      },
-      paymentMethod: "Cash on Delivery", // or make this dynamic
-      totalPrice: totalBill,
-      status: "pending", 
-    };
-    console.log("orderPayload", orderPayload);
-
-    try {
-      const res = await fetch("http://localhost:5000/api/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(orderPayload),
-      });
-      if (!res.ok) throw new Error("Order failed");
-      setMessage("Order placed successfully!");
-      localStorage.removeItem("checkoutShipping");
-      navigate("/thank-you");
-    } catch (e) {
-      setError(e.message || "Order failed. Try again.");
-    } finally {
-      setOrderSending(false);
-    }
+  const orderPayload = {
+    orderItems: cartItems.map((item) => ({
+      name: item.name,
+      quantity: item.quantity,
+      price: item.price,
+      product: item.productId,
+    })),
+    shippingAddress: {
+      address: shipping.address,
+      city: "Unknown",
+      postalCode: "000000",
+      country: "India",
+    },
+    paymentMethod: "Cash on Delivery",
+    totalPrice: totalBill,
+    status: "pending",
   };
+
+  try {
+    const res = await fetch("http://localhost:5000/api/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(orderPayload),
+    });
+
+    if (!res.ok) throw new Error("Order failed");
+
+    // ✅ Clear server-side cart
+    await fetch("http://localhost:5000/api/cart/clear", {
+      method: "DELETE",
+    });
+
+    // ✅ Optionally: clear local cart state if needed
+    setCartItems([]);
+
+    localStorage.removeItem("checkoutShipping");
+    setMessage("Order placed successfully!");
+
+    navigate("/thank-you");
+  } catch (e) {
+    setError(e.message || "Order failed. Try again.");
+  } finally {
+    setOrderSending(false);
+  }
+};
 
   return (
     <Container
