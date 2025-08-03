@@ -4,7 +4,11 @@ import { Card, Row, Col, Spinner, Alert, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import PurchaseMessage from "./PurchaseMessage";
 
-const ProductCard = ({ category = "all" }) => {
+const ProductCard = ({
+  category = "all",
+  products: externalProducts = null,
+  limit = null,
+}) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -12,6 +16,17 @@ const ProductCard = ({ category = "all" }) => {
   const [messageData, setMessageData] = useState(null);
 
   useEffect(() => {
+    if (externalProducts) {
+      setProducts(externalProducts);
+      const initialQuantities = {};
+      externalProducts.forEach((prod) => {
+        initialQuantities[prod.productId] = 1;
+      });
+      setQuantities(initialQuantities);
+      setLoading(false);
+      return;
+    }
+
     const fetchProducts = async () => {
       try {
         const response = await axiosInstance.get("/products");
@@ -30,7 +45,7 @@ const ProductCard = ({ category = "all" }) => {
     };
 
     fetchProducts();
-  }, []);
+  }, [externalProducts]);
 
   const handleQuantityChange = (id, delta) => {
     setQuantities((prev) => {
@@ -98,6 +113,7 @@ const ProductCard = ({ category = "all" }) => {
       <Row xs={2} sm={3} md={4} lg={5} className="gy-3 gx-3 gx-sm-3 gx-md-4">
         {products
           .filter((prod) => category === "all" || prod.category === category)
+          .slice(0, limit || products.length)
           .map((prod) => (
             <Col key={prod.productId}>
               <Card

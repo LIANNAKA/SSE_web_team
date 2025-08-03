@@ -15,7 +15,7 @@ const Home = () => {
             Array.isArray(p.displayLocations) &&
             p.displayLocations.includes("home")
         );
-        setHomeProducts(filtered);
+        setHomeProducts(filtered.slice(0, 10));
       })
       .catch((err) => console.error("Failed to fetch home products", err));
   }, []);
@@ -23,7 +23,7 @@ const Home = () => {
   return (
     <div>
       <Banner />
-      <ProductCard products={homeProducts} />
+      <ProductCard products={homeProducts} limit={10} />
     </div>
   );
 };
