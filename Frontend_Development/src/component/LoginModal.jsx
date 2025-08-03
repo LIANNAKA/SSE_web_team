@@ -63,40 +63,65 @@ function LoginModal({ setShowLoginModal }) {
     }
   };
 
-  const handleLogin = async () => {
-    if (!loginEmail || !loginPassword) {
-      setMessage("Please enter email and password.");
-      return;
-    }
+const handleLogin = async () => {
+  if (!loginEmail || !loginPassword) {
+    setMessage("Please enter email and password.");
+    return;
+  }
 
+  try {
+    // Try admin login first
+    const adminResponse = await axiosInstance.post("http://localhost:5000/api/admin/login", {
+      email: loginEmail,
+      password: loginPassword,
+    });
+
+    const adminData = adminResponse.data;
+
+    localStorage.setItem("adminToken", adminData.token);
+    localStorage.setItem("userRole", "admin");
+    localStorage.setItem("userName", adminData.admin.name || loginEmail);
+
+    setMessage("✅ Welcome Admin!");
+    setTimeout(() => {
+      setShowLoginModal(false);
+      navigate("/admin");
+    }, 1500);
+  } catch (adminError) {
+    // If admin login fails, fallback to user login
     try {
-      const { data } = await axiosInstance.post("/users/login", {
+      const userResponse = await axiosInstance.post("http://localhost:5000/api/users/login", {
         email: loginEmail,
         password: loginPassword,
       });
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.user));
+      const userData = userResponse.data;
 
-      window.dispatchEvent(new Event("storage")); // For Navbar refresh if required
+      localStorage.setItem("token", userData.token);
+      localStorage.setItem("user", JSON.stringify(userData.user));
+      localStorage.setItem("userRole", "user");
+      localStorage.setItem("userName", userData.user.name || loginEmail);
 
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
-    localStorage.setItem("userName", data.userName || loginEmail);
-    window.dispatchEvent(new Event("storage"));  // Update Navbar
+      window.dispatchEvent(new Event("storage")); // For navbar updates
 
       setMessage(
-        data.message || `Welcome back, ${data.user.name || loginEmail}!`
+        userData.message || `✅ Welcome back, ${userData.user.name || loginEmail}!`
       );
 
       setTimeout(() => {
         setShowLoginModal(false);
-        navigate("/");
+        navigate("/user"); // or "/" based on your routing
       }, 1500);
-    } catch (error) {
-      setMessage(error.response?.data?.message || "Invalid credentials.");
+    } catch (userError) {
+      setMessage(
+        userError.response?.data?.message ||
+        adminError.response?.data?.message || 
+        "❌ Login failed. Invalid credentials."
+      );
     }
-  };
+  }
+};
+
 
   return (
     <div
