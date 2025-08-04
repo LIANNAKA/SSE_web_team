@@ -147,6 +147,12 @@ const ProductCard = ({
                     >
                       Price: ₹{prod.price}
                     </Card.Text>
+                    <Card.Text
+                      className="mb-2 text-muted"
+                      style={{ fontSize: "0.85rem" }}
+                    >
+                      Stock: <strong>{prod.stock}</strong>
+                    </Card.Text>
                   </div>
 
                   <div className="d-flex align-items-center justify-content-between mt-2">

@@ -31,8 +31,11 @@ const SingleProductCard = ({ product, quantity, onBuy, onQuantityChange }) => {
             </Link>
           </Card.Title>
 
-          <Card.Text className="text-muted mb-3">
+          <Card.Text className="text-muted mb-1">
             Price: <strong>₹{product.price}</strong>
+          </Card.Text>
+          <Card.Text className="text-muted mb-3">
+            Stock: <strong>{product.stock}</strong>
           </Card.Text>
         </div>
 
@@ -51,12 +54,19 @@ const SingleProductCard = ({ product, quantity, onBuy, onQuantityChange }) => {
             <Button
               variant="outline-secondary"
               size="sm"
-              onClick={() => onQuantityChange(product.productId, 1)}
+              onClick={() => {
+                if (quantity < product.stock) {
+                  onQuantityChange(product.productId, 1);
+                }
+              }}
+              disabled={quantity >= product.stock} // ⛔ disable if limit reached
             >
               +
             </Button>
           </ButtonGroup>
-
+          {quantity >= product.stock && (
+            <small className="text-danger">Max available stock reached</small>
+          )}
           <Button
             className="w-100 mt-2"
             size="sm"

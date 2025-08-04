@@ -1,5 +1,8 @@
 import Order from "../models/Order.js";
 import User from "../models/User.js";
+import Product from "../models/Product.js";
+
+// POST /api/orders
 
 // POST /api/orders
 export const createOrder = async (req, res) => {
@@ -10,6 +13,25 @@ export const createOrder = async (req, res) => {
   }
 
   try {
+    // ✅ Deduct stock before placing order
+    for (const item of orderItems) {
+      const product = await Product.findOne({ productId: item.product });
+
+      if (!product) {
+        return res.status(404).json({ message: `Product ${item.name} not found` });
+      }
+
+      if (product.stock < item.quantity) {
+        return res
+          .status(400)
+          .json({ message: `Insufficient stock for ${product.name}` });
+      }
+
+      product.stock -= item.quantity;
+      await product.save();
+    }
+
+    // ✅ Create order after stock update
     const order = new Order({
       user: req.user._id,
       orderItems,
@@ -25,6 +47,7 @@ export const createOrder = async (req, res) => {
     res.status(500).json({ message: "Failed to create order" });
   }
 };
+
 
 // GET /api/orders - Get all orders for logged-in user
 export const getMyOrders = async (req, res) => {
@@ -67,17 +90,17 @@ export const updateOrderStatus = async (req, res) => {
 
     let stockMessage = "";
 
-    // Only adjust stock if status changed to delivered
-    if (status === "delivered" && order.status !== "delivered") {
-      for (const item of order.orderItems) {
-        const product = await Product.findById(item.product);
-        if (product) {
-          product.stock = product.stock - item.quantity;
-          await product.save();
-          stockMessage += `${product.name}: -${item.quantity} units\n`;
-        }
-      }
-    }
+    // // Only adjust stock if status changed to delivered
+    // if (status === "delivered" && order.status !== "delivered") {
+    //   for (const item of order.orderItems) {
+    //     const product = await Product.findById(item.product);
+    //     if (product) {
+    //       product.stock = product.stock - item.quantity;
+    //       await product.save();
+    //       stockMessage += `${product.name}: -${item.quantity} units\n`;
+    //     }
+    //   }
+    // }
 
     order.status = status;
     await order.save();
